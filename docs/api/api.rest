@@ -1,0 +1,52 @@
+### vars
+@cookie = quickship_admin_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZob25leUBidW5ueS5jb20iLCJpYXQiOjE3MzYwODk3ODQsImV4cCI6MTczNjgwOTc4NH0.JZjOratb-eKzNdf6HkZViZn5d-Vyb0N55f-3Ult8A28; Max-Age=604800; Path=/; Expires=Sun, 12 Jan 2025 15:09:44 GMT; HttpOnly; SameSite=Lax
+
+
+###  signup manager
+POST   http://localhost:3000/api/admin/signup
+Content-Type: application/json
+
+{
+  "name" : "Honey",
+  "email": "vhoney@bunny.com",
+  "password": "honeybunny"
+}
+
+###  login manager
+POST   http://localhost:3000/api/admin/login
+Content-Type: application/json
+
+{
+  "email": "vhoney@bunny.com",
+  "password": "honeybunny"
+}
+
+### create salesman
+POST   http://localhost:3000/api/admin/create/salesmen
+Content-Type: application/json
+
+{
+  "name" : "Honey",
+  "uid": "vhoney@bunny.com",
+  "managerId": 1
+}
+
+### get all salesman
+GET   http://localhost:3000/api/admin/get/salesmen/all
+Content-Type: application/json
+
+### create location
+POST   http://localhost:3000/api/admin/create/location
+Content-Type: application/json
+
+{
+  "name" : "SreeLeather",
+  "address": "berhampur mandiapuli kamapuli 760004",
+  "managerId": 1,
+  "latitude": 19.3114,
+  "longitude": 84.7926
+}
+
+### get all location
+GET   http://localhost:3000/api/admin/get/location/all
+Content-Type: application/json

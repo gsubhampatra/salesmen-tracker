@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Manager {
+  id               Int               @id @default(autoincrement())
+  name             String
+  email            String            @unique
+  password         String
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  User             SalesMan[]
+  ManagedLocations ManagedLocation[]
+}
+
+model SalesMan {
+  id    Int     @id @default(autoincrement())
+  name  String
+  uid   String  @unique
+  phone String?
+
+  managerId Int
+  Manager   Manager @relation(fields: [managerId], references: [id], onDelete: Cascade)
+
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  visitedLocations VisitedLocation[]
+}
+
+model ManagedLocation {
+  id        Int    @id @default(autoincrement())
+  name      String
+  address   String
+  latitude  Float
+  longitude Float
+
+  managerId Int
+  Manager   Manager @relation(fields: [managerId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VisitedLocation {
+  id            Int      @id @default(autoincrement())
+  date          DateTime
+  QrLatitude    Float
+  QrLongitude   Float
+  UserLatitude  Float
+  UserLongitude Float
+
+  salesManId Int
+  SalesMan   SalesMan @relation(fields: [salesManId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

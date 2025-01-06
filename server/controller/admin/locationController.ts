@@ -40,3 +40,22 @@ export async function getAllLocations(
     return res.status(500).json({ msg: 'get locations failed', log: err });
   }
 }
+
+export async function getLocationsByMannagerId(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  try {
+    const { uid } = req.body;
+    const locations = await Prisma.managedLocation.findMany({
+      where: {
+        Manager: {
+          email: uid
+        }
+      }
+    });
+    return res.status(200).json({ data: locations });
+  } catch (err) {
+    return res.status(500).json({ msg: 'get locations failed', log: err });
+  }
+}

@@ -21,6 +21,14 @@ Content-Type: application/json
   "password": "honeybunny"
 }
 
+###  logout manager
+POST     http://localhost:3000/api/admin/logout
+Content-Type: application/json
+
+###  get me
+GET    http://localhost:3000/api/admin/me
+Content-Type: application/json
+
 ### create salesman
 POST   http://localhost:3000/api/admin/create/salesmen
 Content-Type: application/json
@@ -33,6 +41,10 @@ Content-Type: application/json
 
 ### get all salesman
 GET   http://localhost:3000/api/admin/get/salesmen/all
+Content-Type: application/json
+
+### get my salesman
+GET   http://localhost:3000/api/admin/get/salesmen/my
 Content-Type: application/json
 
 ### create location
@@ -49,4 +61,9 @@ Content-Type: application/json
 
 ### get all location
 GET   http://localhost:3000/api/admin/get/location/all
+Content-Type: application/json
+
+
+### get all location
+GET   http://localhost:3000/api/admin/get/location/my
 Content-Type: application/json

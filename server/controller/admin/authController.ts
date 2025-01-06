@@ -52,3 +52,36 @@ export async function managerLogin(
     return res.status(500).json({ msg: 'login failed', log: err });
   }
 }
+
+export async function managerLogout(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  try {
+    res.clearCookie(adminCookieName);
+    return res.status(200).json({ message: "Manager logged out" });
+  } catch (err) {
+    return res.status(500).json({ msg: 'logout failed', log: err });
+  }
+}
+
+export async function getMe(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  try {
+    const { uid } = req.body;
+    console.log("get me",uid);
+    const user = await Prisma.manager.findUnique({
+      where: {
+        email: uid
+      }
+    })
+    if (!user) {
+      return res.status(400).json({ msg: "Manager not found" });
+    }
+    return res.status(200).json({ user });
+  } catch (err) {
+    return res.status(500).json({ msg: 'get me failed', log: err });
+  }
+}

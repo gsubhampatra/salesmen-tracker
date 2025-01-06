@@ -1,10 +1,13 @@
 import { Router } from 'express';
-import { managerLogin, managerSignup } from '../../controller/admin/authController';
+import { getMe, managerLogin, managerLogout, managerSignup } from '../../controller/admin/authController';
+import { validateAdmin } from '../../lib/validation/validateAdmin';
 const router = Router();
 
 // admin routes
 router.post('/signup', managerSignup)
 router.post('/login', managerLogin);
+router.post('/logout',validateAdmin, managerLogout);
+router.get('/me',validateAdmin, getMe);
 
 // user routes
 

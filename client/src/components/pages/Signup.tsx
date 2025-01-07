@@ -71,7 +71,7 @@ export default function Signup() {
           </div>
 
           <button className="p-2 w-full bg-black text-white rounded-md" onClick={handleSignup}>Signup</button>
-          <Link to="/signup" className="text-black underline">Don't have an account ?</Link>
+          <Link to="/login" className="text-black underline">Already have an account ?</Link>
         </div>
       </div>
     </div>

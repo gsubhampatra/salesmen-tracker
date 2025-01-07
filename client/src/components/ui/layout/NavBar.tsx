@@ -17,44 +17,46 @@ async function logout() {
 
 export default function NavBar() {
   const navigate = useNavigate();
-  const {data, isLoading, isError} = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["me"],
     queryFn: getMe,
   })
 
   useEffect(() => {
-    if(data) {
+    if (data) {
       console.log(data);
     }
-  },[data])
+  }, [data])
 
   const logoutMutation = useMutation(logout, {
     onSuccess: (data) => {
-      window.location.href="/login";
+      window.location.href = "/login";
     }
   })
 
-  if(isError) navigate('/login');
+  if (isError) navigate('/login');
 
   return (
     <nav className="flex justify-between items-center p-8">
       {
         isLoading ? <Loading /> : null
       }
-      <h1 className="">My App</h1>
+      <Link to={"/"}>
+        <h1 className="">Quick Sales</h1>
+      </Link>
       <ul className="flex gap-4 items-center">
         <li>
           <Link to={"/manage-salesmen"}>
-          Salesmen
+            Salesmen
           </Link>
         </li>
         <li>
           <Link to={"/manage-location"}>
-          Locations
+            Locations
           </Link>
-          </li>
-        <button  className="text-red-400 underline rounded-md"
-        onClick={() => logoutMutation.mutate()}>Logout</button>
+        </li>
+        <button className="text-red-400 underline rounded-md"
+          onClick={() => logoutMutation.mutate()}>Logout</button>
       </ul>
     </nav>
   )

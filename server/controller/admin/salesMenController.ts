@@ -6,10 +6,21 @@ export async function createSalesMen(
   res: Response,
 ): Promise<Response> {
   try {
-    const { name, uid, managerId } = req.body;
+    const { name, userid, uid } = req.body;
+
+    //get manage id
+    const manager = await Prisma.manager.findUnique({
+      where: {
+        email: uid
+      }
+    })
+    if(!manager){
+      return res.status(400).json({ msg: "Manager not found" });
+    }
+
     const salesMan = await Prisma.salesMan.findUnique({
       where: {
-        uid: uid,
+        uid: userid,
       }
     })
     if (salesMan) {
@@ -17,7 +28,7 @@ export async function createSalesMen(
     }
     const newSalesMan = await Prisma.salesMan.create({
       data: {
-        name, uid, managerId,
+        name, uid: userid, managerId: manager.id,
       }
     })
     if (!newSalesMan) {

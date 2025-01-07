@@ -6,10 +6,22 @@ export async function createLocation(
   res: Response,
 ): Promise<Response> {
   try {
-    const { name, address, latitude, longitude, managerId } = req.body;
+    const { name, address, latitude, longitude, uid } = req.body;
+    console.log({ name, address, latitude, longitude, uid })
+
+    //get manager id
+    const manager = await Prisma.manager.findUnique({
+      where: {
+        email: uid
+      }
+    });
+    if (!manager) {
+      return res.status(400).json({ msg: "Manager not found" });
+    }
+
     const location = await Prisma.managedLocation.findFirst({
       where: {
-        name: name, managerId, address, latitude, longitude
+        name, managerId: manager.id, address, latitude, longitude
       }
     })
     if (location) {
@@ -17,7 +29,7 @@ export async function createLocation(
     }
     const newLocation = await Prisma.managedLocation.create({
       data: {
-        name, address, managerId, latitude, longitude
+        name, address, managerId: manager.id , latitude, longitude
       }
     })
     if (!newLocation) {
@@ -25,6 +37,7 @@ export async function createLocation(
     }
     return res.status(201).json({ message: "Location created", data: newLocation });
   } catch (err) {
+    console.log(err)
     return res.status(500).json({ msg: 'create location failed', log: err });
   }
 }

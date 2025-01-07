@@ -34,9 +34,8 @@ POST   http://localhost:3000/api/admin/create/salesmen
 Content-Type: application/json
 
 {
-  "name" : "Honey",
-  "uid": "vhoney@bunny.com",
-  "managerId": 1
+  "name" : "Honeybunny",
+  "userid": "vhoneyy@bunny.com"
 }
 
 ### get all salesman
@@ -52,11 +51,10 @@ POST   http://localhost:3000/api/admin/create/location
 Content-Type: application/json
 
 {
-  "name" : "SreeLeather",
-  "address": "berhampur mandiapuli kamapuli 760004",
-  "managerId": 1,
-  "latitude": 19.3114,
-  "longitude": 84.7926
+  "name" : "SreeLeatherfd",
+  "address": "berhampur mandiapufdli kamapuli 760004",
+  "latitude": 19.31124,
+  "longitude": 843.7926
 }
 
 ### get all location
@@ -64,6 +62,6 @@ GET   http://localhost:3000/api/admin/get/location/all
 Content-Type: application/json
 
 
-### get all location
+### get my location
 GET   http://localhost:3000/api/admin/get/location/my
 Content-Type: application/json

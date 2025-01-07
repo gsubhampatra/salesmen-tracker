@@ -16,7 +16,7 @@ export const API_ROUTES = {
   },
   LOCATION: {
     GET_ALL: `${BASE_URL}/api/admin/get/locations/all`,
-    GET_BY_MANAGER_ID: `${BASE_URL}/api/admin/get/locations/my`,
+    GET_BY_MANAGER_ID: `${BASE_URL}/api/admin/get/location/my`,
     CREATE: `${BASE_URL}/api/admin/create/location`,
   }
 } as const;

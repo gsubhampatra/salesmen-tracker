@@ -5,7 +5,8 @@ import routes from './routes/routes';
 import { corsOptions } from './lib/cors/cors';
 
 const app = express();
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api", routes);

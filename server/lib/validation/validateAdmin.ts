@@ -19,6 +19,8 @@ export const validateAdmin = (
     }
   }
 
+  console.log("token", token);
+
   if (!token || token == null || token == undefined)
     return res
       .status(401)

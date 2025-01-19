@@ -8,7 +8,16 @@ export const validateAdmin = (
   res: Response,
   next: NextFunction
 ) => {
-  const token = req.cookies[adminCookieName];
+  // Check for token in cookies
+  let token = req.cookies[adminCookieName];
+
+  if (!token) {
+    // Fallback to checking Authorization header
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      token = authHeader.split(" ")[1];
+    }
+  }
 
   if (!token || token == null || token == undefined)
     return res
@@ -16,9 +25,9 @@ export const validateAdmin = (
       .json({ msg: 'Unauthorized', log: 'no token found as cookie' });
 
   try {
-    const payload = jwt.verify(token, jwtSecret) as { email: string };
-    console.log("jwt verification payload",payload);
-    req.body.uid = payload.email;
+    const payload = jwt.verify(token, jwtSecret) as { uid: string };
+    console.log("jwt verification payload", payload);
+    req.body.uid = payload.uid;
     next();
   } catch (ex) {
     res

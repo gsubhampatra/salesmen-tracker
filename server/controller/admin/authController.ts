@@ -25,8 +25,8 @@ export async function managerSignup(
     if (!newUser) {
       return res.status(400).json({ msg: "Manager not created" });
     }
-    res.cookie(adminCookieName, generateJwt({ email }), cookieOption);
-    return res.status(201).json({ message: "Manager created" });
+    res.cookie(adminCookieName, generateJwt({ uid: email }), cookieOption);
+    return res.status(201).json({ message: "Manager created", token:  generateJwt({ email })});
   } catch (err) {
     return res.status(500).json({ msg: 'signup failed', log: err });
   }
@@ -46,8 +46,8 @@ export async function managerLogin(
     if (!user) {
       return res.status(400).json({ msg: "Manager not found" });
     }
-    res.cookie(adminCookieName, generateJwt({ email }), cookieOption);
-    return res.status(200).json({ message: "Manager logged in" });
+    res.cookie(adminCookieName, generateJwt({ uid: email }), cookieOption);
+    return res.status(200).json({ message: "Manager logged in",  token:  generateJwt({ email }) });
   } catch (err) {
     return res.status(500).json({ msg: 'login failed', log: err });
   }

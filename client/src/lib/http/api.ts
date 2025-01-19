@@ -5,11 +5,18 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-// async function apiGet(url:string) {
-//   const res = await fetch(url, {
-//     credentials: 'include'
-
-//   });
-// }
+// Add a request interceptor to include the token in the Authorization header
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken'); // Replace 'authToken' with the key you're using for the token in localStorage
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export default api;

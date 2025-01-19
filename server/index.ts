@@ -11,6 +11,11 @@ app.use(express.json());
 app.use(cookieParser());
 app.use("/api", routes);
 
+
+app.get('/health', (req, res) => {
+    return res.json({ msg: 'Server is running' });
+})
+
 app.listen(process.env.PORT || 3000, () => {
     console.log('Server running on port 3000');
 });

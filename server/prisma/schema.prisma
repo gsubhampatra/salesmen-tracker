@@ -22,6 +22,7 @@ model Manager {
   updatedAt        DateTime          @updatedAt
   User             SalesMan[]
   ManagedLocations ManagedLocation[]
+  AssignSalesman   AssignSalesman[]
 }
 
 model SalesMan {
@@ -37,6 +38,7 @@ model SalesMan {
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
   visitedLocations VisitedLocation[]
+  AssignSalesman   AssignSalesman[]
 }
 
 model ManagedLocation {
@@ -45,6 +47,8 @@ model ManagedLocation {
   address   String
   latitude  Float
   longitude Float
+  region    String
+  state     String
 
   managerId Int
   Manager   Manager @relation(fields: [managerId], references: [id], onDelete: Cascade)
@@ -62,6 +66,17 @@ model VisitedLocation {
   UserLatitude  Float
   UserLongitude Float
 
+  salesManId Int
+  SalesMan   SalesMan @relation(fields: [salesManId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model AssignSalesman {
+  id         Int      @id @default(autoincrement())
+  managerId  Int
+  Manager    Manager  @relation(fields: [managerId], references: [id], onDelete: Cascade)
   salesManId Int
   SalesMan   SalesMan @relation(fields: [salesManId], references: [id], onDelete: Cascade)
 

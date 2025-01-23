@@ -71,3 +71,22 @@ export async function getSalesMenByMannagerId(
     return res.status(500).json({ msg: 'get salesMen failed', log: err });
   }
 }
+
+export async function getVisitedLocationBySalesManId(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  try {
+    const { id } = req.query;
+
+    const visitedLocation = await Prisma.visitedLocation.findMany({
+      where: {
+        salesManId: Number(id)
+      }
+    });
+    
+    return res.status(200).json({ data: visitedLocation });
+  } catch (err) {
+    return res.status(500).json({ msg: 'get salesMen failed', log: err });
+  }
+}

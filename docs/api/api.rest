@@ -66,6 +66,18 @@ Content-Type: application/json
 GET   http://localhost:3000/api/admin/get/location/my
 Content-Type: application/json
 
+### assign salesman
+POST   http://localhost:3000/api/admin/assign
+Content-Type: application/json
+
+{
+  "salesManId" : 1,
+  "locationId" : 1,
+}
+
+### get visited location by salesman id
+GET   http://localhost:3000/api/admin/get/salesmen/visitedlocation?id=1
+Content-Type: application/json
 
 ### USER
 
@@ -92,3 +104,7 @@ Cookie: {{{cookie}}}
   "userLatitude": 19.31124,
   "userLongitude": 843.7926
 }
+
+### get visited location
+GET   http://localhost:3000/api/admin/get/my/visited/location
+Content-Type: application/json

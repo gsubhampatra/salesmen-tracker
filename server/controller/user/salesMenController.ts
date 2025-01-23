@@ -32,3 +32,29 @@ export async function addToVisitedLoation(
   }
   
 }
+
+export async function getVisitedLocation(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  try {
+    const { uid } = req.body;
+    console.log("get visited location", uid);
+    const user = await Prisma.salesMan.findUnique({
+      where: {
+        uid
+      }
+    })
+    if (!user) {
+      return res.status(400).json({ msg: "salesman doesn't exists" });
+    }
+    const visitedLocation = await Prisma.visitedLocation.findMany({
+      where: {
+        salesManId: user.id
+      }
+    })
+    return res.status(200).json({ visitedLocation });
+  } catch (err) {
+    return res.status(500).json({ msg: 'get visited location failed', log: err });
+  }
+}

@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { validateUser } from '../../lib/validation/validateAdmin';
-import { addToVisitedLoation } from '../../controller/user/salesMenController';
+import { addToVisitedLoation, getVisitedLocation } from '../../controller/user/salesMenController';
 const router = Router();
 
-// admin routes
 router.post('/visit/location', validateUser,  addToVisitedLoation);
+router.get('/get/my/visited/location', validateUser,  getVisitedLocation);
 
 
 export default router;

@@ -25,10 +25,11 @@ model Manager {
 }
 
 model SalesMan {
-  id    Int     @id @default(autoincrement())
-  name  String
-  uid   String  @unique
-  phone String?
+  id       Int     @id @default(autoincrement())
+  name     String
+  uid      String  @unique
+  phone    String?
+  canLogin Boolean @default(true)
 
   managerId Int
   Manager   Manager @relation(fields: [managerId], references: [id], onDelete: Cascade)
@@ -48,15 +49,16 @@ model ManagedLocation {
   managerId Int
   Manager   Manager @relation(fields: [managerId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  VisitedLocation VisitedLocation[]
 }
 
 model VisitedLocation {
-  id            Int      @id @default(autoincrement())
+  id            Int             @id @default(autoincrement())
   date          DateTime
-  QrLatitude    Float
-  QrLongitude   Float
+  locationId    Int
+  Location      ManagedLocation @relation(fields: [locationId], references: [id], onDelete: Cascade)
   UserLatitude  Float
   UserLongitude Float
 

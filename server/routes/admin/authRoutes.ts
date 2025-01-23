@@ -9,6 +9,5 @@ router.post('/login', managerLogin);
 router.post('/logout',validateAdmin, managerLogout);
 router.get('/me',validateAdmin, getMe);
 
-// user routes
 
 export default router;

@@ -46,8 +46,9 @@ export async function managerLogin(
     if (!user) {
       return res.status(400).json({ msg: "Manager not found" });
     }
-    res.cookie(adminCookieName, generateJwt({ uid: email }), cookieOption);
-    return res.status(200).json({ message: "Manager logged in",  token:  generateJwt({ uid: email }) });
+    const token = generateJwt({ uid: email });
+    res.cookie(adminCookieName, token, cookieOption);
+    return res.status(200).json({ message: "Manager logged in",  token });
   } catch (err) {
     return res.status(500).json({ msg: 'login failed', log: err });
   }
@@ -75,6 +76,11 @@ export async function getMe(
     const user = await Prisma.manager.findUnique({
       where: {
         email: uid
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
       }
     })
     if (!user) {

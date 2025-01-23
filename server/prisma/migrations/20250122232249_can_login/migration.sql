@@ -13,8 +13,10 @@ CREATE TABLE "Manager" (
 -- CreateTable
 CREATE TABLE "SalesMan" (
     "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
     "uid" TEXT NOT NULL,
     "phone" TEXT,
+    "canLogin" BOOLEAN NOT NULL DEFAULT true,
     "managerId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

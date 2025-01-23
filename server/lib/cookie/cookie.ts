@@ -8,3 +8,4 @@ export const cookieOption: CookieOptions = {
 };
 
 export const adminCookieName = 'quickship_admin_token';
+export const userCookieName = 'quickship_user_token';

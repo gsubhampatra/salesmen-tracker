@@ -54,7 +54,9 @@ Content-Type: application/json
   "name" : "SreeLeatherfd",
   "address": "berhampur mandiapufdli kamapuli 760004",
   "latitude": 19.31124,
-  "longitude": 843.7926
+  "longitude": 843.7926,
+  "region": "east",
+  "state": "odisha"
 }
 
 ### get all location
@@ -72,7 +74,7 @@ Content-Type: application/json
 
 {
   "salesManId" : 1,
-  "locationId" : 1,
+  "locationId" : 1
 }
 
 ### get visited location by salesman id
@@ -90,8 +92,9 @@ Content-Type: application/json
 }
 
 ###  get me
-GET    http://localhost:3000/api/admin/me
+GET    http://localhost:3000/api/user/me
 Content-Type: application/json
+Cookie: {{cookie}}
 
 ### visit location routes
 POST   http://localhost:3000/api/user/visit/location
@@ -106,5 +109,5 @@ Cookie: {{{cookie}}}
 }
 
 ### get visited location
-GET   http://localhost:3000/api/admin/get/my/visited/location
+GET   http://localhost:3000/api/user/get/my/visited/location
 Content-Type: application/json

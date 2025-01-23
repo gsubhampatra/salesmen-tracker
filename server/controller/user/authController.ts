@@ -52,7 +52,7 @@ export async function getMe(
       }
     })
     if (!user) {
-      return res.status(400).json({ msg: "Manager not found" });
+      return res.status(400).json({ msg: "Salesmen not found" });
     }
     return res.status(200).json({ user });
   } catch (err) {

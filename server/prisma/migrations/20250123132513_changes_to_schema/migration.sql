@@ -31,6 +31,8 @@ CREATE TABLE "ManagedLocation" (
     "address" TEXT NOT NULL,
     "latitude" DOUBLE PRECISION NOT NULL,
     "longitude" DOUBLE PRECISION NOT NULL,
+    "region" TEXT NOT NULL,
+    "state" TEXT NOT NULL,
     "managerId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -42,8 +44,7 @@ CREATE TABLE "ManagedLocation" (
 CREATE TABLE "VisitedLocation" (
     "id" SERIAL NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
-    "QrLatitude" DOUBLE PRECISION NOT NULL,
-    "QrLongitude" DOUBLE PRECISION NOT NULL,
+    "locationId" INTEGER NOT NULL,
     "UserLatitude" DOUBLE PRECISION NOT NULL,
     "UserLongitude" DOUBLE PRECISION NOT NULL,
     "salesManId" INTEGER NOT NULL,
@@ -51,6 +52,17 @@ CREATE TABLE "VisitedLocation" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "VisitedLocation_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "AssignSalesman" (
+    "id" SERIAL NOT NULL,
+    "managerId" INTEGER NOT NULL,
+    "salesManId" INTEGER NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "AssignSalesman_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -66,4 +78,13 @@ ALTER TABLE "SalesMan" ADD CONSTRAINT "SalesMan_managerId_fkey" FOREIGN KEY ("ma
 ALTER TABLE "ManagedLocation" ADD CONSTRAINT "ManagedLocation_managerId_fkey" FOREIGN KEY ("managerId") REFERENCES "Manager"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "VisitedLocation" ADD CONSTRAINT "VisitedLocation_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "ManagedLocation"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "VisitedLocation" ADD CONSTRAINT "VisitedLocation_salesManId_fkey" FOREIGN KEY ("salesManId") REFERENCES "SalesMan"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AssignSalesman" ADD CONSTRAINT "AssignSalesman_managerId_fkey" FOREIGN KEY ("managerId") REFERENCES "Manager"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AssignSalesman" ADD CONSTRAINT "AssignSalesman_salesManId_fkey" FOREIGN KEY ("salesManId") REFERENCES "SalesMan"("id") ON DELETE CASCADE ON UPDATE CASCADE;

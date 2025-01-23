@@ -1,5 +1,5 @@
 ### vars
-@cookie = quickship_admin_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InZob25leUBidW5ueS5jb20iLCJpYXQiOjE3MzYwODk3ODQsImV4cCI6MTczNjgwOTc4NH0.JZjOratb-eKzNdf6HkZViZn5d-Vyb0N55f-3Ult8A28; Max-Age=604800; Path=/; Expires=Sun, 12 Jan 2025 15:09:44 GMT; HttpOnly; SameSite=Lax
+@cookie = quickship_user_token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1aWQiOiI5MzM3MzE4ODczIiwiaWF0IjoxNzM3NjIwMDg5LCJleHAiOjE3MzgzNDAwODl9.FlqLIRhGy1cs0Q7UCF9e7lfI6OOuLFZwZGFx43Oc7iw; Max-Age=604800; Path=/; Expires=Thu, 30 Jan 2025 08:14:49 GMT; HttpOnly; SameSite=Lax
 
 
 ###  signup manager
@@ -35,7 +35,7 @@ Content-Type: application/json
 
 {
   "name" : "Honeybunny",
-  "userid": "vhoneyy@bunny.com"
+  "userid": "9337318873"
 }
 
 ### get all salesman
@@ -65,3 +65,30 @@ Content-Type: application/json
 ### get my location
 GET   http://localhost:3000/api/admin/get/location/my
 Content-Type: application/json
+
+
+### USER
+
+###  login user
+POST   http://localhost:3000/api/user/login
+Content-Type: application/json
+
+{
+  "uid": "9337318873"
+}
+
+###  get me
+GET    http://localhost:3000/api/admin/me
+Content-Type: application/json
+
+### visit location routes
+POST   http://localhost:3000/api/user/visit/location
+Content-Type: application/json
+Cookie: {{{cookie}}}
+
+{
+  "locationId": 1,
+  "date": "2023-10-01T12:00:00Z",
+  "userLatitude": 19.31124,
+  "userLongitude": 843.7926
+}

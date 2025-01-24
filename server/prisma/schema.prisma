@@ -66,6 +66,8 @@ model VisitedLocation {
   Location      ManagedLocation @relation(fields: [locationId], references: [id], onDelete: Cascade)
   UserLatitude  Float
   UserLongitude Float
+  scanDistance  Float
+  visitCount    Int @default(0)
 
   salesManId Int
   SalesMan   SalesMan @relation(fields: [salesManId], references: [id], onDelete: Cascade)

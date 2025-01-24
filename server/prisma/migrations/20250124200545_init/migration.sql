@@ -47,6 +47,8 @@ CREATE TABLE "VisitedLocation" (
     "locationId" INTEGER NOT NULL,
     "UserLatitude" DOUBLE PRECISION NOT NULL,
     "UserLongitude" DOUBLE PRECISION NOT NULL,
+    "scanDistance" DOUBLE PRECISION NOT NULL,
+    "visitCount" INTEGER NOT NULL,
     "salesManId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -59,6 +61,7 @@ CREATE TABLE "AssignSalesman" (
     "id" SERIAL NOT NULL,
     "managerId" INTEGER NOT NULL,
     "salesManId" INTEGER NOT NULL,
+    "locationId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -88,3 +91,6 @@ ALTER TABLE "AssignSalesman" ADD CONSTRAINT "AssignSalesman_managerId_fkey" FORE
 
 -- AddForeignKey
 ALTER TABLE "AssignSalesman" ADD CONSTRAINT "AssignSalesman_salesManId_fkey" FOREIGN KEY ("salesManId") REFERENCES "SalesMan"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "AssignSalesman" ADD CONSTRAINT "AssignSalesman_locationId_fkey" FOREIGN KEY ("locationId") REFERENCES "ManagedLocation"("id") ON DELETE CASCADE ON UPDATE CASCADE;

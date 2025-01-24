@@ -27,7 +27,18 @@ export async function addToVisitedLoation(
       return res.status(400).json({ msg: "location doesn't exists" });
     }
     // euclidean distance formula- does not work for large distance, as it does not consider the curvature of the earth, better to use haversine formula
-    const distance = Math.sqrt(Math.pow(userLatitude - location.latitude, 2) + Math.pow(userLongitude - location.longitude, 2));
+    const toMeterScale = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+      const latDiff = (lat1 - lat2) * 111000; // Scale latitude to meters (111 km -> 111,000 meters)
+      const lonDiff = (lon1 - lon2) * 111000 * Math.cos(((lat1 + lat2) / 2) * Math.PI / 180); // Scale longitude to meters
+      return Math.sqrt(Math.pow(latDiff, 2) + Math.pow(lonDiff, 2)); // Result in meters
+    };
+
+    const distance = toMeterScale(
+      userLatitude,
+      userLongitude,
+      location.latitude,
+      location.longitude
+    );
 
     // check if location already exists
     const visitedLocationCheck = await Prisma.visitedLocation.findFirst({
@@ -64,7 +75,7 @@ export async function addToVisitedLoation(
     console.log(err);
     return res.status(500).json({ msg: 'add location failed', log: err });
   }
-  
+
 }
 
 export async function getVisitedLocation(

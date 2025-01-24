@@ -25,8 +25,9 @@ export async function managerSignup(
     if (!newUser) {
       return res.status(400).json({ msg: "Manager not created" });
     }
-    res.cookie(adminCookieName, generateJwt({ uid: email }), cookieOption);
-    return res.status(201).json({ message: "Manager created", token:  generateJwt({ uid: email })});
+    const token = generateJwt({ uid: email });
+    res.cookie(adminCookieName, token, cookieOption);
+    return res.status(201).json({ message: "Manager created", token: token});
   } catch (err) {
     return res.status(500).json({ msg: 'signup failed', log: err });
   }

@@ -35,3 +35,22 @@ export async function assignSalesman(
     return res.status(500).json({ msg: 'assign failed', log: err });
   }
 }
+
+export async function getAssignedLocationBySalesmanId(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  try {
+    const { id } = req.query;
+    console.log("get assign", id);
+    const assign = await Prisma.assignSalesman.findMany({
+      where: {
+        salesManId: Number(id)
+      }
+    });
+    return res.status(200).json({ msg: "Salesman location", assign });
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ msg: 'get assign failed', log: err });
+  }
+}

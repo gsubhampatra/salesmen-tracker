@@ -45,7 +45,17 @@ export async function getAssignedLocationBySalesmanId(
     console.log("get assign", id);
     const assign = await Prisma.assignSalesman.findMany({
       where: {
-        salesManId: Number(id)
+        salesManId: Number(id),
+      },
+      include: {
+        Location: {
+          select: {
+            name: true,
+            address: true,
+            latitude: true,
+            longitude: true,
+          }
+        }
       }
     });
     return res.status(200).json({ msg: "Salesman location", assign });

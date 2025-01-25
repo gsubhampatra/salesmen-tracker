@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { validateAdmin, validateUser } from '../../lib/validation/validateAdmin';
-import { getMe } from '../../controller/admin/authController';
+import { getMe } from '../../controller/user/authController';
 import { salesManLogin } from '../../controller/user/authController';
 const router = Router();
 

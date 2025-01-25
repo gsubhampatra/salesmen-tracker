@@ -96,6 +96,16 @@ export async function getVisitedLocation(
     const visitedLocation = await Prisma.visitedLocation.findMany({
       where: {
         salesManId: user.id
+      },
+      include: {
+        Location: {
+          select: {
+            name: true,
+            address: true,
+            latitude: true,
+            longitude: true,
+          }
+        }
       }
     })
     return res.status(200).json({ visitedLocation });

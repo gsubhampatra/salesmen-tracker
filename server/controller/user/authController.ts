@@ -12,12 +12,22 @@ export async function salesManLogin(
     console.log("login", uid);
     const user = await Prisma.salesMan.findUnique({
       where: {
-        uid
+        uid, canLogin: true
       }
     })
     if (!user) {
       return res.status(400).json({ msg: "SalesMan not found" });
     }
+    // update canLogin to false, so that the user can't login again
+    await Prisma.salesMan.update({
+      where: {
+        uid
+      },
+      data: {
+        canLogin: false
+      }
+    });
+    
     const token = generateJwt({ uid });
     res.cookie(userCookieName, token, cookieOption);
     return res.status(200).json({ message: "SalesMan logged in", token });

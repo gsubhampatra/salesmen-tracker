@@ -28,6 +28,7 @@ CREATE TABLE "SalesMan" (
 CREATE TABLE "ManagedLocation" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
+    "market_name" TEXT NOT NULL,
     "address" TEXT NOT NULL,
     "latitude" DOUBLE PRECISION NOT NULL,
     "longitude" DOUBLE PRECISION NOT NULL,
@@ -48,7 +49,7 @@ CREATE TABLE "VisitedLocation" (
     "UserLatitude" DOUBLE PRECISION NOT NULL,
     "UserLongitude" DOUBLE PRECISION NOT NULL,
     "scanDistance" DOUBLE PRECISION NOT NULL,
-    "visitCount" INTEGER NOT NULL,
+    "visitCount" INTEGER NOT NULL DEFAULT 0,
     "salesManId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

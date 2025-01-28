@@ -6,7 +6,7 @@ export async function createLocation(
   res: Response,
 ): Promise<Response> {
   try {
-    const { name, address, latitude, longitude, uid, region, state } = req.body;
+    const { name, marketName, address, latitude, longitude, uid, region, state } = req.body;
     console.log({ name, address, latitude, longitude, uid })
 
     //get manager id
@@ -29,7 +29,7 @@ export async function createLocation(
     }
     const newLocation = await Prisma.managedLocation.create({
       data: {
-        name, address, managerId: manager.id , latitude, longitude, region, state
+        name, market_name: marketName, address, managerId: manager.id , latitude, longitude, region, state
       }
     })
     if (!newLocation) {

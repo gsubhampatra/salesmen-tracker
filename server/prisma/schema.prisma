@@ -42,13 +42,14 @@ model SalesMan {
 }
 
 model ManagedLocation {
-  id        Int    @id @default(autoincrement())
-  name      String
-  address   String
-  latitude  Float
-  longitude Float
-  region    String
-  state     String
+  id          Int    @id @default(autoincrement())
+  name        String
+  market_name String
+  address     String
+  latitude    Float
+  longitude   Float
+  region      String
+  state       String
 
   managerId Int
   Manager   Manager @relation(fields: [managerId], references: [id], onDelete: Cascade)
@@ -67,7 +68,7 @@ model VisitedLocation {
   UserLatitude  Float
   UserLongitude Float
   scanDistance  Float
-  visitCount    Int @default(0)
+  visitCount    Int             @default(0)
 
   salesManId Int
   SalesMan   SalesMan @relation(fields: [salesManId], references: [id], onDelete: Cascade)

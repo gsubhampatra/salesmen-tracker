@@ -101,6 +101,7 @@ export async function getVisitedLocation(
         Location: {
           select: {
             name: true,
+            market_name: true,
             address: true,
             latitude: true,
             longitude: true,

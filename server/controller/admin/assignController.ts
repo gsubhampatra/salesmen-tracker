@@ -51,6 +51,7 @@ export async function getAssignedLocationBySalesmanId(
         Location: {
           select: {
             name: true,
+            market_name: true,
             address: true,
             latitude: true,
             longitude: true,

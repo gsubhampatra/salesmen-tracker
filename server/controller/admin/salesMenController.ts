@@ -6,7 +6,7 @@ export async function createSalesMen(
   res: Response,
 ): Promise<Response> {
   try {
-    const { name, userid, uid } = req.body;
+    const { name, userid, uid, salesManType } = req.body;
 
     //get manage id
     const manager = await Prisma.manager.findUnique({
@@ -28,7 +28,7 @@ export async function createSalesMen(
     }
     const newSalesMan = await Prisma.salesMan.create({
       data: {
-        name, uid: userid, managerId: manager.id,
+        name, uid: userid, managerId: manager.id, salesManType
       }
     })
     if (!newSalesMan) {

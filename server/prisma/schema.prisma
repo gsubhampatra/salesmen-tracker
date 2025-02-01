@@ -25,12 +25,19 @@ model Manager {
   AssignSalesman   AssignSalesman[]
 }
 
+enum SalesManType {
+  VANSALES
+  PRESELLER
+  MERCHANDISER
+}
+
 model SalesMan {
-  id       Int     @id @default(autoincrement())
-  name     String
-  uid      String  @unique
-  phone    String?
-  canLogin Boolean @default(true)
+  id           Int          @id @default(autoincrement())
+  name         String
+  uid          String       @unique
+  phone        String?
+  canLogin     Boolean      @default(true)
+  salesManType SalesManType
 
   managerId Int
   Manager   Manager @relation(fields: [managerId], references: [id], onDelete: Cascade)
@@ -41,8 +48,14 @@ model SalesMan {
   AssignSalesman   AssignSalesman[]
 }
 
+enum StoreType {
+  RETAILER
+  DISTRIBUTOR
+  WHOLESALER
+}
+
 model ManagedLocation {
-  id          Int    @id @default(autoincrement())
+  id          Int       @id @default(autoincrement())
   name        String
   market_name String
   address     String
@@ -50,6 +63,7 @@ model ManagedLocation {
   longitude   Float
   region      String
   state       String
+  storeType   StoreType
 
   managerId Int
   Manager   Manager @relation(fields: [managerId], references: [id], onDelete: Cascade)

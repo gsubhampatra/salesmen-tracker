@@ -1,3 +1,9 @@
+-- CreateEnum
+CREATE TYPE "SalesManType" AS ENUM ('VANSALES', 'PRESELLER', 'MERCHANDISER');
+
+-- CreateEnum
+CREATE TYPE "StoreType" AS ENUM ('RETAILER', 'DISTRIBUTOR', 'WHOLESALER');
+
 -- CreateTable
 CREATE TABLE "Manager" (
     "id" SERIAL NOT NULL,
@@ -17,6 +23,7 @@ CREATE TABLE "SalesMan" (
     "uid" TEXT NOT NULL,
     "phone" TEXT,
     "canLogin" BOOLEAN NOT NULL DEFAULT true,
+    "salesManType" "SalesManType" NOT NULL,
     "managerId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -34,6 +41,7 @@ CREATE TABLE "ManagedLocation" (
     "longitude" DOUBLE PRECISION NOT NULL,
     "region" TEXT NOT NULL,
     "state" TEXT NOT NULL,
+    "storeType" "StoreType" NOT NULL,
     "managerId" INTEGER NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

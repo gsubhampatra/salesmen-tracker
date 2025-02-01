@@ -29,6 +29,7 @@ enum SalesManType {
   VANSALES
   PRESELLER
   MERCHANDISER
+  DILIVERY
 }
 
 model SalesMan {

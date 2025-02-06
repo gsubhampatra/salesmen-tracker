@@ -40,11 +40,12 @@ export async function addToVisitedLoation(
       location.longitude
     );
 
-    // check if location already exists
+    // check if location already exists for todays date
     const visitedLocationCheck = await Prisma.visitedLocation.findFirst({
       where: {
         locationId,
-        salesManId: user.id
+        salesManId: user.id,
+        date: date
       }
     })
     if (visitedLocationCheck) {

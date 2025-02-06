@@ -6,7 +6,7 @@ export async function assignSalesman(
   res: Response,
 ): Promise<Response> {
   try {
-    const { salesManId, locationId , uid} = req.body;
+    const { salesManId, locationId, uid } = req.body;
     console.log("assign", salesManId, locationId, uid);
 
     //get manager id
@@ -29,10 +29,46 @@ export async function assignSalesman(
     if (!assign) {
       return res.status(400).json({ msg: "SalesMan not assigned" });
     }
-    return res.status(201).json({msg: "SalesMan not assigned", assign});
+    return res.status(201).json({ msg: "SalesMan not assigned", assign });
   } catch (err) {
     console.log(err)
     return res.status(500).json({ msg: 'assign failed', log: err });
+  }
+}
+
+export async function unAssignSalesman(
+  req: Request,
+  res: Response,
+): Promise<Response> {
+  try {
+    const { salesManId, locationId, uid } = req.body;
+    console.log("assign", salesManId, locationId, uid);
+
+    //get manager id
+    const manager = await Prisma.manager.findUnique({
+      where: {
+        email: uid
+      }
+    });
+    if (!manager) {
+      return res.status(400).json({ msg: "Manager not found" });
+    }
+
+    const unassign = await Prisma.assignSalesman.deleteMany({
+      where: {
+        salesManId,
+        locationId,
+        managerId: manager.id
+      }
+    })
+
+    if (!unassign) {
+      return res.status(400).json({ msg: "SalesMan unassign failed" });
+    }
+    return res.status(201).json({ msg: "SalesMan unassign failed", unassign });
+  } catch (err) {
+    console.log(err)
+    return res.status(500).json({ msg: 'unassign failed', log: err });
   }
 }
 

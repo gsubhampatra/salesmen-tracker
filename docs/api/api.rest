@@ -35,7 +35,8 @@ Content-Type: application/json
 
 {
   "name" : "Honeybunny",
-  "userid": "9337318873"
+  "userid": "9337318873",
+  "salesManType" : "VANSALES"
 }
 
 ### get all salesman
@@ -70,6 +71,15 @@ Content-Type: application/json
 
 ### assign salesman
 POST   http://localhost:3000/api/admin/assign
+Content-Type: application/json
+
+{
+  "salesManId" : 1,
+  "locationId" : 1
+}
+
+### unassign salesman
+POST   http://localhost:3000/api/admin/unassign
 Content-Type: application/json
 
 {

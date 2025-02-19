@@ -1,7 +1,5 @@
-import { Response,Request } from "express";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { Response, Request } from "express";
+import { Prisma } from "../../lib/prisma/prismaClinet";
 
 export async function welcomeToDashboard(
   req: Request,
@@ -12,11 +10,15 @@ export async function welcomeToDashboard(
 
 export const getTotalSalesmen = async (req: Request, res: Response) => {
   try {
-    const totalSalesmen = await prisma.salesMan.count();
-    return res.status(200).json({ totalSalesmen });
+    const totalSalesmen = await Prisma.salesMan.count();
+    return res
+      .status(200)
+      .json({ totalSalesmen, msg: "total salesman get successfully" });
   } catch (error) {
     console.error("Error fetching total salesmen:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ msg: "error in getting total salesmen", error });
   }
 };
 
@@ -28,7 +30,7 @@ export const getSalesmenVisitedToday = async (req: Request, res: Response) => {
     const endOfDay = new Date();
     endOfDay.setHours(23, 59, 59, 999);
 
-    const totalVisited = await prisma.visitedLocation.count({
+    const totalVisited = await Prisma.visitedLocation.count({
       where: {
         date: {
           gte: startOfDay,
@@ -40,11 +42,16 @@ export const getSalesmenVisitedToday = async (req: Request, res: Response) => {
     return res.status(200).json({ totalVisited });
   } catch (error) {
     console.error("Error fetching salesmen visited today:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ msg: "error in getting salesmen visited today", error });
   }
 };
 
-export const getSalesmenNotVisitedToday = async (req: Request, res: Response) => {
+export const getSalesmenNotVisitedToday = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
@@ -53,10 +60,10 @@ export const getSalesmenNotVisitedToday = async (req: Request, res: Response) =>
     endOfDay.setHours(23, 59, 59, 999);
 
     // Get total salesmen
-    const totalSalesmen = await prisma.salesMan.count();
+    const totalSalesmen = await Prisma.salesMan.count();
 
     // Get salesmen who visited today using `findMany`
-    const visitedToday = await prisma.visitedLocation.findMany({
+    const visitedToday = await Prisma.visitedLocation.findMany({
       where: {
         date: {
           gte: startOfDay,
@@ -66,7 +73,7 @@ export const getSalesmenNotVisitedToday = async (req: Request, res: Response) =>
       select: {
         salesManId: true,
       },
-      distinct: ["salesManId"], // ✅ This works
+      distinct: ["salesManId"], 
     });
 
     const notVisited = totalSalesmen - visitedToday.length;
@@ -74,6 +81,8 @@ export const getSalesmenNotVisitedToday = async (req: Request, res: Response) =>
     return res.status(200).json({ notVisited });
   } catch (error) {
     console.error("Error fetching salesmen not visited today:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ msg: "error in getting salesmen not visited today", error });
   }
 };

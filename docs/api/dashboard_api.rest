@@ -1,0 +1,15 @@
+
+
+### get total salesman
+GET http://localhost:3000/api/dashboard/total-salesman
+Content-Type: application/json
+
+
+### get visited today
+GET http://localhost:3000/api/dashboard/visited-today
+Content-Type: application/json
+
+### get not visited today
+GET http://localhost:3000/api/dashboard/not-visited-today
+Content-Type: application/json
+

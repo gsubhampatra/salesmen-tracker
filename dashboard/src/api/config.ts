@@ -9,9 +9,23 @@ export const api = axios.create({
 
 export const API_PATHS = {
   DASHBOARD: {
-    TOTAL_SALESMAN: "/total-salesman",
-    VISITED_TODAY: "/visited-today",
-    NOT_VISITED_TODAY: "/not-visited-today",
+    ROOT: "/",
+    SALESMEN_COUNT: "/salesmen-count",
+    STORES_COUNT: "/stores-count",
+    ALL_SALESMEN: "/salesmen",
+    ALL_STORES: "/stores",
+    VISITED: "/visited",
+    SALESMAN_TIME_ANALYSIS: (salesmanId: number) =>
+      `/salesman/${salesmanId}/time-analysis`,
+    VISITED_OUTLETS: (salesmanId: number) =>
+      `/salesman/${salesmanId}/visited-outlets`,
+    ASSIGNED_OUTLETS: (salesmanId: number) =>
+      `/salesman/${salesmanId}/assigned-outlets`,
+    ACCURACY: "/accuracy",
+    ACCURACY_BY_SALESMAN: (salesmanId: number) => `/accuracy/${salesmanId}`,
+    ALL_VISITED_LOCATIONS: "/getallvisits",
+    ALL_ASSIGNED_LOCATIONS: "/getAllAssignedLocations",
+    ALL_SALESMEN_REPORT: "/getallsalesmansReport",
+    ALL_DISTRIBUTORS_REPORT: "/getdistributorReport",
   },
-  // Add more paths here
 };

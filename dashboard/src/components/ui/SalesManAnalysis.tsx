@@ -1,105 +1,207 @@
+// Dashboard.tsx
 import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
+  ArcElement,
   Tooltip,
   Legend,
-} from "chart.js";
-import {
-  getSalesmenVisitedToday,
-  getSalesmenNotVisitedToday,
-  getTotalSalesMan,
-} from "../../api/apiFunctions";
-
-// Register Chart.js components
-ChartJS.register(
   CategoryScale,
   LinearScale,
   BarElement,
   Title,
+} from "chart.js";
+import { Pie, Bar } from "react-chartjs-2";
+import {
+  useAccuracy,
+  useAllSalesmen,
+  useAllStores,
+  useSalesmenCount,
+  useStoreCount,
+  useTimeAnalysis,
+  useVisitedLocations,
+} from "../../api/apiHooks";
+
+ChartJS.register(
+  ArcElement,
   Tooltip,
-  Legend
+  Legend,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title
 );
 
-const SalesManAnalysis: React.FC = () => {
+const Dashboard: React.FC = () => {
   const {
-    data: visitedResponse,
-    isLoading: loadingVisited,
-    isError: errorVisited,
-  } = useQuery({
-    queryKey: ["visitedToday"],
-    queryFn: () => getSalesmenVisitedToday(),
-  });
-
+    data: salesmenCountResponse,
+    isLoading: isLoadingSalesmenCount,
+    error: errorSalesmenCount,
+  } = useSalesmenCount();
   const {
-    data: notVisitedResponse,
-    isLoading: loadingNotVisited,
-    isError: errorNotVisited,
-  } = useQuery({
-    queryKey: ["notVisitedToday"],
-    queryFn: () => getSalesmenNotVisitedToday(),
-  });
-
+    data: storeCountResponse,
+    isLoading: isLoadingStoreCount,
+    error: errorStoreCount,
+  } = useStoreCount();
   const {
-    data: totalResponse,
-    isLoading: loadingTotal,
-    isError: errorTotal,
-  } = useQuery({
-    queryKey: ["totalSalesmen"],
-    queryFn: () => getTotalSalesMan(),
-  });
+    data: allSalesmenResponse,
+    isLoading: isLoadingAllSalesmen,
+    error: errorAllSalesmen,
+  } = useAllSalesmen();
+  const {
+    data: allStoresResponse,
+    isLoading: isLoadingAllStores,
+    error: errorAllStores,
+  } = useAllStores();
+  const {
+    data: visitedLocationsResponse,
+    isLoading: isLoadingVisitedLocations,
+    error: errorVisitedLocations,
+  } = useVisitedLocations();
+  const {
+    data: timeAnalysis,
+    isLoading: isLoadingTimeAnalysis,
+    error: errorTimeAnalysis,
+  } = useTimeAnalysis(5); // Example salesmanId
+  const {
+    data: accuracy,
+    isLoading: isLoadingAccuracy,
+    error: errorAccuracy,
+  } = useAccuracy();
 
-  if (loadingVisited || loadingNotVisited || loadingTotal) {
-    return <div className="p-4 text-center">Loading...</div>;
+  if (
+    isLoadingSalesmenCount ||
+    isLoadingStoreCount ||
+    isLoadingAllSalesmen ||
+    isLoadingAllStores ||
+    isLoadingVisitedLocations ||
+    isLoadingTimeAnalysis ||
+    isLoadingAccuracy
+  ) {
+    return <div>Loading...</div>;
   }
 
-  if (errorVisited || errorNotVisited || errorTotal) {
-    return (
-      <div className="p-4 text-center text-red-500">
-        Error fetching data. Please try again.
-      </div>
-    );
+  if (
+    errorSalesmenCount ||
+    errorStoreCount ||
+    errorAllSalesmen ||
+    errorAllStores ||
+    errorVisitedLocations ||
+    errorTimeAnalysis ||
+    errorAccuracy
+  ) {
+    return <div>Error loading data.</div>;
   }
 
-  const visited = visitedResponse?.totalVisited || 0;
-  const notVisited = notVisitedResponse?.notVisited || 0;
-  const total = totalResponse?.totalSalesmen || 0;
+  // Extract data from responses
+  const salesmenCount = salesmenCountResponse?.salesmen.resData;
+  const storeCount = storeCountResponse?.stores.resData;
+  const allSalesmen = allSalesmenResponse?.allSalesmen;
+  const allStores = allStoresResponse?.allStores;
+  const totalVisited = visitedLocationsResponse?.totalVisited;
 
-  const data = {
-    labels: ["Visited Today", "Not Visited Today"],
+  // Data for Pie Chart (Salesmen Count)
+  const salesmenChartData = {
+    labels: salesmenCount?.map((item) => item.salesManType),
     datasets: [
       {
-        label: "Number of Salesmen",
-        data: [visited, notVisited],
-        backgroundColor: ["#4CAF50", "#F44336"],
+        label: "Salesmen Count",
+        data: salesmenCount?.map((item) => item.count),
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.6)",
+          "rgba(54, 162, 235, 0.6)",
+          "rgba(255, 206, 86, 0.6)",
+          "rgba(75, 192, 192, 0.6)",
+        ],
+        borderWidth: 1,
       },
     ],
   };
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top" as const,
+  // Data for Bar Chart (Store Count)
+  const storeChartData = {
+    labels: storeCount?.map((item) => item.storeType),
+    datasets: [
+      {
+        label: "Store Count",
+        data: storeCount?.map((item) => item.count),
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.6)",
+          "rgba(54, 162, 235, 0.6)",
+          "rgba(255, 206, 86, 0.6)",
+        ],
+        borderWidth: 1,
       },
-      title: {
-        display: false,
-      },
-    },
+    ],
   };
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow">
-      <h2 className="mb-4 text-xl font-bold">Salesmen Analysis</h2>
-      <Bar data={data} options={options} />
-      <div className="mt-4 text-sm text-gray-600">Total Salesmen: {total}</div>
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {/* Salesmen Count Chart */}
+        <div className="bg-white rounded-lg shadow-md p-4">
+          <h2 className="text-lg font-semibold mb-2">Salesmen Count</h2>
+          {salesmenCount && <Pie data={salesmenChartData} />}
+        </div>
+
+        {/* Store Count Chart */}
+        <div className="bg-white rounded-lg shadow-md p-4">
+          <h2 className="text-lg font-semibold mb-2">Store Count</h2>
+          {storeCount && <Bar data={storeChartData} />}
+        </div>
+
+        {/* Accuracy Card */}
+        <div className="bg-white rounded-lg shadow-md p-4">
+          <h2 className="text-lg font-semibold mb-2">Accuracy</h2>
+          {accuracy && (
+            <div>
+              <p>Accuracy Percentage: {accuracy.accuracyPercentage}%</p>
+              <p>Total Visits: {accuracy.totalVisits}</p>
+              <p>Accurate Visits: {accuracy.accurateVisits}</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* All Salesmen List */}
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-2">All Salesmen</h2>
+        <ul className="list-disc pl-5">
+          {allSalesmen?.map((salesman) => (
+            <li key={salesman.id}>{salesman.name}</li>
+          ))}
+        </ul>
+      </div>
+
+      {/* All Stores List */}
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-2">All Stores</h2>
+        <ul className="list-disc pl-5">
+          {allStores?.map((store) => (
+            <li key={store.id}>{store.name}</li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Time Analysis */}
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-2">Time Analysis</h2>
+        {timeAnalysis && (
+          <div>
+            <p>In Time: {timeAnalysis.inTime || "N/A"}</p>
+            <p>Out Time: {timeAnalysis.outTime || "N/A"}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Visited Location Count */}
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-2">Visited Location Count</h2>
+        <p>Total Visited: {totalVisited}</p>
+      </div>
     </div>
   );
 };
 
-export default SalesManAnalysis;
+export default Dashboard;

@@ -11,6 +11,9 @@ import {
   getAssignedOutletsBySalesman,
   getAccuracyAnalysis,
   getAllVisitedLocations,
+  getAllAssignedLocations,
+  getAllSalesmens,
+  getDistributorSalesmenDetails,
 } from "../../controller/dashboard/dashboardController";
 
 const router = Router();
@@ -35,6 +38,9 @@ router.get("/accuracy/:salesmanId", getAccuracyAnalysis);
 
 //testing
 router.get("/getallvisits", getAllVisitedLocations);
-router.get("/getAllAssignedLocations", getAllSalesmen);
+router.get("/getAllAssignedLocations", getAllAssignedLocations);
+
+router.get("/getallsalesmansReport", getAllSalesmens);
+router.get("/getdistributorReport", getDistributorSalesmenDetails);
 
 export default router;

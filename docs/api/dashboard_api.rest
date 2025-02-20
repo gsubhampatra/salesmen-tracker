@@ -50,3 +50,11 @@ Content-Type: application/json
 ###get  all assigned locations
 GET http://localhost:3000/api/dashboard/getAllAssignedLocations
 Content-Type: application/json
+
+###get  all salesmans report
+GET http://localhost:3000/api/dashboard/getallsalesmansReport
+Content-Type: application/json
+
+###get all distributors report
+GET http://localhost:3000/api/dashboard/getdistributorReport?date=2025-02-05
+Content-Type: application/json

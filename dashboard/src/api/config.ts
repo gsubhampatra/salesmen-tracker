@@ -12,6 +12,7 @@ export const API_PATHS = {
     TOTAL_SALESMAN: "/total-salesman",
     VISITED_TODAY: "/visited-today",
     NOT_VISITED_TODAY: "/not-visited-today",
+    ALL_SALESMEN: "/all-salesmen",
   },
   // Add more paths here
 };

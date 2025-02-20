@@ -16,3 +16,8 @@ export const getSalesmenNotVisitedToday = async () => {
   const response = await api.get(API_PATHS.DASHBOARD.NOT_VISITED_TODAY);
   return response.data;
 };
+
+export const getAllSalesmen = async () => {
+  const response = await api.get(API_PATHS.DASHBOARD.ALL_SALESMEN);
+  return response.data;
+};

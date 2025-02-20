@@ -1,17 +1,18 @@
 import React from "react";
-import { Chart, registerables } from "chart.js";
-import SalesManAnalysis from "./components/ui/SalesManAnalysis";
-
-Chart.register(...registerables);
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
+import SalesmanList from "./pages/Salesman/SalesmanList";
+// import VisitReport from "./pages/Visits/VisitReport";
 
 const App: React.FC = () => {
   return (
-    <div className="flex flex-col items-center min-h-screen p-6 bg-gray-100">
-      <h1 className="mb-6 text-2xl font-bold">Dashboard</h1>
-      <div className="grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-2">
-        <SalesManAnalysis />
-      </div>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/salesman" element={<SalesmanList />} />
+        {/* <Route path="/visits" element={<VisitReport />} /> */}
+      </Routes>
+    </Router>
   );
 };
 

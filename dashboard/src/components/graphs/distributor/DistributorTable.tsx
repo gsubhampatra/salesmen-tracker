@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowUpDown, Check, Clock } from "lucide-react";
+import { ArrowUpDown,  Clock } from "lucide-react";
 
 interface DistributorData {
   region: string;
@@ -28,66 +28,66 @@ const DistributorAnalyticsTable: React.FC<Props> = ({ data }) => {
   };
 
   return (
-    <div className="overflow-x-auto rounded-xl shadow-lg bg-white p-1">
+    <div className="p-1 overflow-x-auto bg-white shadow-lg rounded-xl">
       <table className="w-full border-collapse">
         <thead>
-          <tr className="bg-gray-50 border-b border-gray-100">
+          <tr className="border-b border-gray-100 bg-gray-50">
             <th className="p-4 text-left">
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-sm font-semibold tracking-wider text-gray-600 uppercase">
                 Region
                 <ArrowUpDown size={16} className="text-gray-400" />
               </div>
             </th>
             <th className="p-4 text-left">
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-sm font-semibold tracking-wider text-gray-600 uppercase">
                 State
                 <ArrowUpDown size={16} className="text-gray-400" />
               </div>
             </th>
             <th className="p-4 text-left">
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-sm font-semibold tracking-wider text-gray-600 uppercase">
                 Type
                 <ArrowUpDown size={16} className="text-gray-400" />
               </div>
             </th>
             <th className="p-4 text-left">
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-sm font-semibold tracking-wider text-gray-600 uppercase">
                 In Time
                 <Clock size={16} className="text-gray-400" />
               </div>
             </th>
             <th className="p-4 text-left">
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-sm font-semibold tracking-wider text-gray-600 uppercase">
                 Out Time
                 <Clock size={16} className="text-gray-400" />
               </div>
             </th>
             <th className="p-4 text-left">
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-sm font-semibold tracking-wider text-gray-600 uppercase">
                 Visited/Assigned
                 <ArrowUpDown size={16} className="text-gray-400" />
               </div>
             </th>
             <th className="p-4 text-left">
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-sm font-semibold tracking-wider text-gray-600 uppercase">
                 Accuracy
                 <ArrowUpDown size={16} className="text-gray-400" />
               </div>
             </th>
             <th className="p-4 text-left">
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-sm font-semibold tracking-wider text-gray-600 uppercase">
                 Location
                 <ArrowUpDown size={16} className="text-gray-400" />
               </div>
             </th>
             <th className="p-4 text-left">
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-sm font-semibold tracking-wider text-gray-600 uppercase">
                 Market
                 <ArrowUpDown size={16} className="text-gray-400" />
               </div>
             </th>
             <th className="p-4 text-left">
-              <div className="flex items-center gap-2 text-sm font-semibold text-gray-600 uppercase tracking-wider">
+              <div className="flex items-center gap-2 text-sm font-semibold tracking-wider text-gray-600 uppercase">
                 Salesman
                 <ArrowUpDown size={16} className="text-gray-400" />
               </div>
@@ -98,12 +98,12 @@ const DistributorAnalyticsTable: React.FC<Props> = ({ data }) => {
           {data.map((row, index) => (
             <tr
               key={index}
-              className="hover:bg-gray-50 transition-colors duration-150 ease-in-out"
+              className="transition-colors duration-150 ease-in-out hover:bg-gray-50"
             >
               <td className="p-4 text-sm text-gray-600">{row.region}</td>
               <td className="p-4 text-sm text-gray-600">{row.state}</td>
               <td className="p-4">
-                <span className="px-3 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-600">
+                <span className="px-3 py-1 text-xs font-medium text-blue-600 rounded-full bg-blue-50">
                   {row.salesmanType}
                 </span>
               </td>
@@ -118,9 +118,9 @@ const DistributorAnalyticsTable: React.FC<Props> = ({ data }) => {
               </td>
               <td className="p-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-16 bg-gray-200 rounded-full h-2">
+                  <div className="w-16 h-2 bg-gray-200 rounded-full">
                     <div 
-                      className="bg-green-500 h-2 rounded-full" 
+                      className="h-2 bg-green-500 rounded-full" 
                       style={{ width: `${row.accuracyPercentage}%` }}
                     />
                   </div>
@@ -133,7 +133,7 @@ const DistributorAnalyticsTable: React.FC<Props> = ({ data }) => {
               <td className="p-4 text-sm text-gray-600">{row.marketName}</td>
               <td className="p-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                  <div className="flex items-center justify-center w-8 h-8 bg-gray-100 rounded-full">
                     {row.salesmanName.charAt(0)}
                   </div>
                   <span className="text-sm font-medium text-gray-900">

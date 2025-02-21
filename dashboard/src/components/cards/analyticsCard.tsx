@@ -29,19 +29,19 @@ const StatCard: React.FC<CardProps> = ({ title, value, icon }) => {
   return (
     <div className="relative overflow-hidden p-6 rounded-2xl bg-gradient-to-br from-white to-gray-50/50 border border-gray-100 shadow-lg transform transition-all duration-500 hover:scale-[1.02] hover:shadow-xl group">
       {/* Animated background elements */}
-      <div className="absolute inset-0 bg-gradient-to-r from-blue-50/20 via-purple-50/20 to-blue-50/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-      <div className="absolute -inset-1 bg-gradient-to-r from-blue-100/20 via-purple-100/20 to-blue-100/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 animate-gradient" />
+      <div className="absolute inset-0 transition-opacity duration-700 opacity-0 bg-gradient-to-r from-blue-50/20 via-purple-50/20 to-blue-50/20 group-hover:opacity-100" />
+      <div className="absolute transition-opacity duration-700 opacity-0 -inset-1 bg-gradient-to-r from-blue-100/20 via-purple-100/20 to-blue-100/20 blur-xl group-hover:opacity-100 animate-gradient" />
       
       {/* Decorative circles */}
-      <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl transform translate-x-8 -translate-y-8" />
-      <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-500/5 rounded-full blur-2xl transform -translate-x-8 translate-y-8" />
+      <div className="absolute top-0 right-0 w-24 h-24 transform translate-x-8 -translate-y-8 rounded-full bg-blue-500/5 blur-2xl" />
+      <div className="absolute bottom-0 left-0 w-24 h-24 transform -translate-x-8 translate-y-8 rounded-full bg-purple-500/5 blur-2xl" />
       
       {/* Card content */}
       <div className="relative flex items-start gap-4">
         {/* Icon container */}
-        <div className="flex-shrink-0 relative group">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/10 rounded-full blur-lg transform transition-all duration-500 group-hover:scale-110" />
-          <div className="relative p-3 bg-gradient-to-br from-white to-blue-50 rounded-full shadow-md border border-blue-100/50">
+        <div className="relative flex-shrink-0 group">
+          <div className="absolute inset-0 transition-all duration-500 transform rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/10 blur-lg group-hover:scale-110" />
+          <div className="relative p-3 border rounded-full shadow-md bg-gradient-to-br from-white to-blue-50 border-blue-100/50">
             {React.cloneElement(icon as React.ReactElement<any>, {
               width: 24,
               height: 24,
@@ -52,11 +52,11 @@ const StatCard: React.FC<CardProps> = ({ title, value, icon }) => {
         </div>
         
         {/* Text content */}
-        <div className="flex-1 space-y-1 relative z-10">
-          <p className="text-xs font-medium text-gray-400 uppercase tracking-wider">
+        <div className="relative z-10 flex-1 space-y-1">
+          <p className="text-xs font-medium tracking-wider text-gray-400 uppercase">
             {title}
           </p>
-          <h3 className="text-3xl font-extrabold bg-gradient-to-br from-gray-800 to-gray-600 bg-clip-text text-transparent">
+          <h3 className="text-3xl font-extrabold text-transparent bg-gradient-to-br from-gray-800 to-gray-600 bg-clip-text">
             {value || "—"}
           </h3>
         </div>
@@ -68,19 +68,19 @@ const StatCard: React.FC<CardProps> = ({ title, value, icon }) => {
   );
 };
 
-// Add animation keyframes to your CSS
-const styles = `
-  @keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
+// // Add animation keyframes to your CSS
+// const styles = `
+//   @keyframes gradient {
+//     0% { background-position: 0% 50%; }
+//     50% { background-position: 100% 50%; }
+//     100% { background-position: 0% 50%; }
+//   }
 
-  .animate-gradient {
-    animation: gradient 8s ease infinite;
-    background-size: 200% 200%;
-  }
-`;
+//   .animate-gradient {
+//     animation: gradient 8s ease infinite;
+//     background-size: 200% 200%;
+//   }
+// `;
 
 export const TotalSalesmenCard: React.FC<{ data: { totalSalesmen?: number } }> = ({ data }) => (
   <StatCard
@@ -164,7 +164,7 @@ export const MostVisitedLocationCard: React.FC<{ data: MostVisitedLocation }> = 
 
 const AnalyticsDashboard: React.FC<{ data: AnalyticsData & { mostVisitedLocation?: MostVisitedLocation } }> = ({ data }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-6">
+    <div className="grid grid-cols-1 gap-6 p-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       <TotalSalesmenCard data={data} />
       <TotalLocationsManagedCard data={data} />
       <TotalVisitsMadeCard data={data} />

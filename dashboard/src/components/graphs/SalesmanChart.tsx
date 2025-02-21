@@ -12,7 +12,7 @@ const COLORS = {
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-200">
+      <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-lg">
         <p className="font-medium text-gray-900">{label}</p>
         <p className="text-indigo-600">
           Count: {payload[0].value}
@@ -43,8 +43,8 @@ export const SalesmenChart: React.FC<{ data: SalesmanData[] }> = ({ data }) => {
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-xl p-6 hover:shadow-2xl transition-shadow duration-300">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">Salesmen Distribution</h2>
+    <div className="p-6 transition-shadow duration-300 bg-white shadow-xl rounded-xl hover:shadow-2xl">
+      <h2 className="mb-6 text-2xl font-bold text-gray-800">Salesmen Distribution</h2>
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -59,7 +59,7 @@ export const SalesmenChart: React.FC<{ data: SalesmanData[] }> = ({ data }) => {
               dataKey="count"
               nameKey="salesManType"
             >
-              {data.map((entry, index) => (
+              {data.map((_, index) => (
                 <Cell 
                   key={`cell-${index}`}
                   fill={COLORS.salesmen[index % COLORS.salesmen.length]}

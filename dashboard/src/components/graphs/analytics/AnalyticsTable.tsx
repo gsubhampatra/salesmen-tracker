@@ -27,7 +27,7 @@ interface LocationAnalyticsTableProps {
 }
 
 const LocationAnalyticsTable: React.FC<LocationAnalyticsTableProps> = ({ data }) => {
-  const [sortConfig, setSortConfig] = useState<{
+  const [sortConfig, _] = useState<{
     key: keyof LocationAnalytics | '';
     direction: 'asc' | 'desc';
   }>({ key: '', direction: 'asc' });
@@ -42,10 +42,10 @@ const LocationAnalyticsTable: React.FC<LocationAnalyticsTableProps> = ({ data })
     });
   };
 
-  const handleSort = (key: keyof LocationAnalytics) => {
-    const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
-    setSortConfig({ key, direction });
-  };
+  // const handleSort = (key: keyof LocationAnalytics) => {
+  //   const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
+  //   setSortConfig({ key, direction });
+  // };
 
   const sortedData = React.useMemo(() => {
     if (!sortConfig.key) return data;
@@ -69,7 +69,7 @@ const LocationAnalyticsTable: React.FC<LocationAnalyticsTableProps> = ({ data })
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg border border-slate-200">
+    <div className="bg-white border rounded-lg shadow-lg border-slate-200">
       <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
         <h2 className="text-xl font-semibold text-slate-800">Analytics Table</h2>
       </div>
@@ -132,7 +132,7 @@ const LocationAnalyticsTable: React.FC<LocationAnalyticsTableProps> = ({ data })
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                  <span className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-700 border border-blue-100 rounded-full bg-blue-50">
                     {row.storeType}
                   </span>
                 </td>
@@ -140,12 +140,12 @@ const LocationAnalyticsTable: React.FC<LocationAnalyticsTableProps> = ({ data })
                   <span className="font-medium text-slate-900">{row.salesmanName}</span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-slate-100 text-slate-700">
+                  <span className="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full bg-slate-100 text-slate-700">
                     {row.salesmanType}
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="bg-slate-100 rounded-lg p-3 space-y-2">
+                  <div className="p-3 space-y-2 rounded-lg bg-slate-100">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-medium text-slate-500">IN</span>
                       <span className="text-sm font-medium text-slate-700">{formatTime(row.inTime)}</span>
@@ -157,26 +157,26 @@ const LocationAnalyticsTable: React.FC<LocationAnalyticsTableProps> = ({ data })
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="bg-slate-100 rounded-lg p-3">
-                    <div className="flex justify-between items-center mb-2">
+                  <div className="p-3 rounded-lg bg-slate-100">
+                    <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-slate-700">
                         {row.outletsVisited} / {row.outletsAssigned}
                       </span>
                     </div>
-                    <div className="w-full bg-slate-200 rounded-full h-2">
+                    <div className="w-full h-2 rounded-full bg-slate-200">
                       <div 
-                        className="bg-blue-600 h-2 rounded-full" 
+                        className="h-2 bg-blue-600 rounded-full" 
                         style={{ width: `${(row.outletsVisited / row.outletsAssigned) * 100}%` }}
                       />
                     </div>
                   </div>
                 </td>
                 <td className="px-6 py-4">
-                  <div className="bg-slate-100 rounded-lg p-3">
-                    <div className="flex justify-between items-center mb-2">
+                  <div className="p-3 rounded-lg bg-slate-100">
+                    <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-slate-700">{row.accuracyPercentage}%</span>
                     </div>
-                    <div className="w-full bg-slate-200 rounded-full h-2">
+                    <div className="w-full h-2 rounded-full bg-slate-200">
                       <div 
                         className={`h-2 rounded-full ${getProgressBarColor(row.accuracyPercentage)}`}
                         style={{ width: `${row.accuracyPercentage}%` }}

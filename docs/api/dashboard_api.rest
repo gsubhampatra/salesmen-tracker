@@ -1,0 +1,60 @@
+
+###get  welcome message
+GET http://localhost:3000/api/dashboard/
+Content-Type: application/json
+
+###get  salesmen count
+GET http://localhost:3000/api/dashboard/salesmen-count
+Content-Type: application/json
+
+###get  stores count
+GET http://localhost:3000/api/dashboard/stores-count
+Content-Type: application/json
+
+###get  all salesmen
+GET http://localhost:3000/api/dashboard/salesmen
+Content-Type: application/json
+
+###get  all stores
+GET http://localhost:3000/api/dashboard/stores
+Content-Type: application/json
+
+###get  salesmen visited by date
+GET http://localhost:3000/api/dashboard/visited?date=2025-02-05
+Content-Type: application/json
+
+###get  times salesman visited outlets
+GET http://localhost:3000/api/dashboard/salesman/5/time-analysis
+Content-Type: application/json
+
+###get  visited outlets by salesman
+GET http://localhost:3000/api/dashboard/salesman/1/visited-outlets
+Content-Type: application/json
+
+###get  assigned outlets by salesman
+GET http://localhost:3000/api/dashboard/salesman/1/assigned-outlets
+Content-Type: application/json
+
+###get  accuracy analysis
+GET http://localhost:3000/api/dashboard/accuracy
+Content-Type: application/json
+
+###get  accuracy analysis by salesman
+GET http://localhost:3000/api/dashboard/accuracy/1
+Content-Type: application/json
+
+###get  all visits
+GET http://localhost:3000/api/dashboard/getallvisits
+Content-Type: application/json
+
+###get  all assigned locations
+GET http://localhost:3000/api/dashboard/getAllAssignedLocations
+Content-Type: application/json
+
+###get  all salesmans report
+GET http://localhost:3000/api/dashboard/getallsalesmansReport
+Content-Type: application/json
+
+###get all distributors report
+GET http://localhost:3000/api/dashboard/getdistributorReport?date=2025-02-05
+Content-Type: application/json

@@ -8,14 +8,27 @@ import {
   mockStoreCount,
   mockTimeAnalysis,
   mockVisitedLocations,
-  Salesman,
   SalesmanCountResponse,
-  Store,
   StoreCountResponse,
   TimeAnalysis,
   VisitedLocationResponse,
   AllSalesmenResponse,
   AllStoresResponse,
+  DistributorAnalyticsResponse,
+  TotalOutletsAssignedResponse,
+  TotalOutletsVisitedResponse,
+  OverallAccuracyPercentageResponse,
+  AverageVisitDurationResponse,
+  MaxDistanceTraveledResponse,
+  UniqueSalesmenResponse,
+  VisitsPerDistributorResponse,
+  MostActiveSalesmanResponse,
+  DistributorsWithNoVisitsResponse,
+  PeakVisitingHoursResponse,
+  SalesmanAccuracyResponse,
+  SalesmanProductivityResponse,
+  AverageVisitDurationOverTimeResponse,
+  AccuracyOverTimeResponse,
 } from "../types/responseTypes";
 import {
   getSalesmenCount,
@@ -25,7 +38,24 @@ import {
   getStoreCount,
   getAllSalesmen,
   getAllStores,
+  getDistributorAnalytics,
+  getTotalOutletsAssigned,
+  getTotalOutletsVisited,
+  getOverallAccuracy,
+  getAverageVisitDuration,
+  getMaxDistanceTraveled,
+  getUniqueSalesman,
+  getVisitsPerDistributor,
+  getMostActiveSalesman,
+  getDistributorWithNoVisits,
+  getPeakVisitingHours,
+  getSalesmanAccuracy,
+  getSalesmanProductivity,
+  getAvgVisitDurationOvertime,
+  getAccuracyOverTime,
+  getSalesmanSummary,
 } from "./apiFunctions";
+import { LocationAnalyticResponse } from "../types/detailedResponseType";
 
 const useSalesmenCount = () => {
   return useQuery<SalesmanCountResponse>({
@@ -132,6 +162,174 @@ const useAccuracy = () => {
   });
 };
 
+const useDistributorAnalytics = () => {
+  return useQuery<DistributorAnalyticsResponse>({
+    queryKey: ["distributorAnalytics"],
+    queryFn: async () => {
+      try {
+        const response = await getDistributorAnalytics();
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching distributor analytics:", error);
+        return  // Provide mock data on error
+      }
+    },
+  });
+};
+
+const useTotalOutletsAssigned = () => {
+  return useQuery<TotalOutletsAssignedResponse>({
+    queryKey: ["totalOutletsAssigned"],
+    queryFn: async () => {
+      const response = await getTotalOutletsAssigned();
+      return response.data;
+    },
+  });
+};
+
+const useTotalOutletsVisited = () => {
+  return useQuery<TotalOutletsVisitedResponse>({
+    queryKey: ["totalOutletsVisited"],
+    queryFn: async () => {
+      const response = await getTotalOutletsVisited();
+      return response.data;
+    },
+  });
+};
+
+const useOverallAccuracy = () => {
+  return useQuery<OverallAccuracyPercentageResponse>({
+    queryKey: ["overallAccuracy"],
+    queryFn: async () => {
+      const response = await getOverallAccuracy();
+      return response.data;
+    },
+  });
+};
+
+const useAverageVisitDuration = () => {
+  return useQuery<AverageVisitDurationResponse>({
+    queryKey: ["averageVisitDuration"],
+    queryFn: async () => {
+      const response = await getAverageVisitDuration();
+      return response.data;
+    },
+  });
+};
+
+const useMaxDistanceTraveled = () => {
+  return useQuery<MaxDistanceTraveledResponse>({
+    queryKey: ["maxDistanceTraveled"],
+    queryFn: async () => {
+      const response = await getMaxDistanceTraveled();
+      return response.data;
+    },
+  });
+};
+
+const useUniqueSalesman = () => {
+  return useQuery<UniqueSalesmenResponse>({
+    queryKey: ["uniqueSalesman"],
+    queryFn: async () => {
+      const response = await getUniqueSalesman();
+      return response.data;
+    },
+  });
+};
+
+const useVisitsPerDistributor = () => {
+  return useQuery<VisitsPerDistributorResponse>({
+    queryKey: ["visitsPerDistributor"],
+    queryFn: async () => {
+      const response = await getVisitsPerDistributor();
+      return response.data;
+    },
+  });
+};
+
+const useMostActiveSalesman = () => {
+  return useQuery<MostActiveSalesmanResponse>({
+    queryKey: ["mostActiveSalesman"],
+    queryFn: async () => {
+      const response = await getMostActiveSalesman();
+      return response.data;
+    },
+  });
+};
+
+const useDistributorWithNoVisits = () => {
+  return useQuery<DistributorsWithNoVisitsResponse>({
+    queryKey: ["distributorWithNoVisits"],
+    queryFn: async () => {
+      const response = await getDistributorWithNoVisits();
+      return response.data;
+    },
+  });
+};
+
+const usePeakVisitingHours = () => {
+  return useQuery<PeakVisitingHoursResponse>({
+    queryKey: ["peakVisitingHours"],
+    queryFn: async () => {
+      const response = await getPeakVisitingHours();
+      return response.data;
+    },
+  });
+};
+
+const useSalesmanAccuracy = () => {
+  return useQuery<SalesmanAccuracyResponse>({
+    queryKey: ["salesmanAccuracy"],
+    queryFn: async () => {
+      const response = await getSalesmanAccuracy();
+      return response.data;
+    },
+  });
+};
+
+const useSalesmanProductivity = () => {
+  return useQuery<SalesmanProductivityResponse>({
+    queryKey: ["salesmanProductivity"],
+    queryFn: async () => {
+      const response = await getSalesmanProductivity();
+      return response.data;
+    },
+  });
+};
+
+const useAvgVisitDurationOvertime = () => {
+  return useQuery<AverageVisitDurationOverTimeResponse>({
+    queryKey: ["averageVisitDurationOverTime"],
+    queryFn: async () => {
+      const response = await getAvgVisitDurationOvertime();
+      return response.data;
+    },
+  });
+};
+
+const useAccuracyOverTime = () => {
+  return useQuery<AccuracyOverTimeResponse>({
+    queryKey: ["accuracyOverTime"],
+    queryFn: async () => {
+      const response = await getAccuracyOverTime();
+      return response.data;
+    },
+  });
+};
+
+const useSalesmanSummary = (date?: string) => {
+  return useQuery<LocationAnalyticResponse>({
+    queryKey: ["salesmanSummary", date],
+    queryFn: async () => {
+      const response = await getSalesmanSummary();
+      return response.data;
+    },
+  });
+};
+
+
+
+
 export {
   useSalesmenCount,
   useStoreCount,
@@ -140,4 +338,20 @@ export {
   useVisitedLocations,
   useTimeAnalysis,
   useAccuracy,
+  useDistributorAnalytics,
+  useTotalOutletsAssigned,
+  useTotalOutletsVisited,
+  useOverallAccuracy,
+  useAverageVisitDuration,
+  useMaxDistanceTraveled,
+  useUniqueSalesman,
+  useVisitsPerDistributor,
+  useMostActiveSalesman,
+  useDistributorWithNoVisits,
+  usePeakVisitingHours,
+  useSalesmanAccuracy,
+  useSalesmanProductivity,
+  useAvgVisitDurationOvertime,
+  useAccuracyOverTime,
+  useSalesmanSummary,
 };

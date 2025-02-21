@@ -690,7 +690,7 @@ export const getDistributorSalesmenDetails = async (
   }
 };
 
-// Haversine formula to calculate distance between two points
+
 const getHaversineDistance = (
   lat1: number,
   lon1: number,
@@ -712,3 +712,10 @@ const getHaversineDistance = (
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 };
+
+
+
+
+
+
+

@@ -95,6 +95,136 @@ export interface Accuracy {
   accurateVisits: number;
 }
 
+export interface DistributorAnalytics {
+  region: string;
+  state: string;
+  salesmanType: string;
+  inTime: number | null;
+  outTime: number | null;
+  outletsVisited: number;
+  outletsAssigned: number;
+  accuracyPercentage: number;
+  locationName: string;
+  marketName: string;
+  salesmanName: string;
+}
+
+export interface DistributorAnalyticsResponse {
+  success: boolean;
+  data: DistributorAnalytics[];
+  debug?: {
+    dateQueried: Date;
+    totalDistributors: number;
+    distributorsWithVisits: number;
+  };
+}
+
+export interface TotalOutletsAssignedResponse {
+  success: boolean;
+  totalOutletsAssigned: number;
+}
+
+export interface TotalOutletsVisitedResponse {
+  success: boolean;
+  totalOutletsVisited: number;
+}
+
+export interface OverallAccuracyPercentageResponse {
+  success: boolean;
+  overallAccuracy: string; // percentage as string with 2 decimal places
+}
+
+export interface AverageVisitDurationResponse {
+  success: boolean;
+  avgVisitDuration: string; // duration as string with 2 decimal places
+}
+
+export interface MaxDistanceTraveledResponse {
+  success: boolean;
+  maxDistanceTraveled: string; // distance as string with 2 decimal places
+}
+
+export interface UniqueSalesmenResponse {
+  success: boolean;
+  totalSalesmen: number;
+}
+
+export interface VisitsPerDistributor {
+  locationName: string;
+  totalVisits: number;
+}
+
+export interface VisitsPerDistributorResponse {
+  success: boolean;
+  visitsPerDistributor: VisitsPerDistributor[];
+}
+
+export interface MostActiveSalesman {
+  name: string;
+  totalVisits: number;
+}
+
+export interface MostActiveSalesmanResponse {
+  success: boolean;
+  mostActiveSalesman: MostActiveSalesman | null;
+}
+
+export interface DistributorsWithNoVisitsResponse {
+  success: boolean;
+  distributorsWithNoVisits: number;
+}
+
+export interface PeakVisitingHour {
+  hour: string;
+  visits: number;
+}
+
+export interface PeakVisitingHoursResponse {
+  success: boolean;
+  peakVisitingHours: PeakVisitingHour[];
+}
+
+export interface SalesmanAccuracy {
+  salesmanName: string;
+  accuracyPercentage: number;
+}
+
+export interface SalesmanAccuracyResponse {
+  success: boolean;
+  salesmanAccuracy: SalesmanAccuracy[];
+}
+export interface SalesmanProductivity {
+  date: string;
+  salesman: string;
+  visits: number;
+}
+
+export interface SalesmanProductivityResponse {
+  success: boolean;
+  data: SalesmanProductivity[];
+}
+
+export interface AverageVisitDurationOverTime {
+  date: string;
+  avgDuration: number;
+}
+
+export interface AverageVisitDurationOverTimeResponse {
+  success: boolean;
+  data: AverageVisitDurationOverTime[];
+}
+
+export interface AccuracyOverTime {
+  date: string;
+  accuracy: number;
+}
+
+export interface AccuracyOverTimeResponse {
+  success: boolean;
+  data: AccuracyOverTime[];
+}
+
+
 //Mock Data Interfaces
 export interface AccuracyResponse {
     accuracyPercentage: number;
@@ -212,3 +342,4 @@ export const mockAccuracy: Accuracy = {
   totalVisits: 7,
   accurateVisits: 1,
 };
+

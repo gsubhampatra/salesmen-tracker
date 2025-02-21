@@ -143,7 +143,7 @@ export const getSalesmenVisitedByDate = async (
   }
 };
 
-export const getSalesmanInTimeOutTime = async (req: any, res: any) => {
+export const getSalesmanInTimeOutTime = async (req: Request, res: Response) => {
   try {
     const { salesmanId } = req.params;
     const { date: dateString } = req.query as DateQueryParams;
@@ -194,19 +194,20 @@ export const getSalesmanInTimeOutTime = async (req: any, res: any) => {
     res.status(500).json({ error: "Failed to fetch salesman time analysis" });
   }
 };
-export const getVisitedOutletsBySalesman = async (req: any, res: any) => {
+export const getVisitedOutletsBySalesman = async (req: Request, res: Response) => {
   try {
     const { salesmanId } = req.params;
     const { date } = req.query as DateQueryParams;
 
+    const dateToUse = date ? new Date(date) : new Date();
     // Validate date
-    if (!date) {
+    if (isNaN(dateToUse.getTime())) {
       return res
         .status(400)
-        .json({ error: "Date parameter is required in YYYY-MM-DD format." });
+        .json({ error: "Invalid date format. Use YYYY-MM-DD." });
     }
 
-    const startDate = new Date(date);
+    const startDate = new Date(dateToUse);
     if (isNaN(startDate.getTime())) {
       return res
         .status(400)
@@ -253,19 +254,20 @@ export const getVisitedOutletsBySalesman = async (req: any, res: any) => {
   }
 };
 
-export const getAssignedOutletsBySalesman = async (req: any, res: any) => {
+export const getAssignedOutletsBySalesman = async (req: Request, res: Response) => {
   try {
     const { salesmanId } = req.params;
     const { date } = req.query as DateQueryParams;
-
+   
+    const dateToUse = date ? new Date(date) : new Date();
     // Validate date
-    if (!date) {
+    if (isNaN(dateToUse.getTime())) {
       return res
         .status(400)
-        .json({ error: "Date parameter is required in YYYY-MM-DD format." });
+        .json({ error: "Invalid date format. Use YYYY-MM-DD." });
     }
 
-    const startDate = new Date(date);
+    const startDate = new Date(dateToUse);
     if (isNaN(startDate.getTime())) {
       return res
         .status(400)
@@ -300,7 +302,7 @@ export const getAssignedOutletsBySalesman = async (req: any, res: any) => {
 
     res.status(200).json({
       salesmanId: parseInt(salesmanId),
-      date: date,
+      date: dateToUse,
       assignedOutlets: assignedOutletsList,
       totalAssigned: assignedOutletsList.length,
     });
@@ -340,7 +342,7 @@ interface AccuracyAnalysisQuery {
   endDate?: string; // ISO 8601 date string (YYYY-MM-DD)
 }
 
-export const getAccuracyAnalysis = async (req: any, res: any) => {
+export const getAccuracyAnalysis = async (req: Request, res: Response) => {
   try {
     const { startDate: startDateString, endDate: endDateString } =
       req.query as AccuracyAnalysisQuery;
@@ -381,32 +383,32 @@ export const getAccuracyAnalysis = async (req: any, res: any) => {
             }
           : {}),
       },
-      include: {
-        Location: true, // Include the ManagedLocation data
-      },
     });
 
     const accuracyThreshold = 100; // meters
-    let accurateVisits = 0;
-
-    for (const visit of visitedLocations) {
-      if (visit.Location) {
-        const distance = calculateDistance(
-          visit.UserLatitude,
-          visit.UserLongitude,
-          visit.Location.latitude,
-          visit.Location.longitude
-        );
-
-        if (distance <= accuracyThreshold) {
-          accurateVisits++;
-        }
+    // let accurateVisits = 0;
+    // let totalDistance = 0;
+    // for (const visit of visitedLocations) {
+    //   if (visit.Location) {
+    //     const distance = calculateDistance(
+    //       visit.UserLatitude,
+    //       visit.UserLongitude,
+    //       visit.Location.latitude,
+    //       visit.Location.longitude
+    //     );
+    //     totalDistance += distance;
+    //   }
+    // }
+     let accurateVisits =0
+     let totalVisits = visitedLocations.length
+    for (const visit of visitedLocations){
+      if (visit.scanDistance<=100) {
+         accurateVisits++ 
       }
     }
 
-    const totalVisits = visitedLocations.length;
-    const accuracyPercentage =
-      totalVisits > 0 ? (accurateVisits / totalVisits) * 100 : 0;
+    const accuracyPercentage = (accurateVisits / totalVisits) * 100;
+
 
     res.status(200).json({
       accuracyPercentage,
@@ -419,7 +421,7 @@ export const getAccuracyAnalysis = async (req: any, res: any) => {
     res.status(500).json({ error: "Failed to fetch accuracy analysis" });
   }
 };
-export const getAccuracyBySalesman = async (req: any, res: any) => {
+export const getAccuracyBySalesman = async (req: Request, res: Response) => {
   try {
     const { salesmanId: salesmanIdString } = req.params;
 
@@ -471,32 +473,13 @@ export const getAccuracyBySalesman = async (req: any, res: any) => {
             }
           : {}),
       },
-      include: {
-        Location: true, // Include the ManagedLocation data
-      },
+     
     });
 
     const accuracyThreshold = 100; // meters
-    let accurateVisits = 0;
-
-    for (const visit of visitedLocations) {
-      if (visit.Location) {
-        const distance = calculateDistance(
-          visit.UserLatitude,
-          visit.UserLongitude,
-          visit.Location.latitude,
-          visit.Location.longitude
-        );
-
-        if (distance <= accuracyThreshold) {
-          accurateVisits++;
-        }
-      }
-    }
-
     const totalVisits = visitedLocations.length;
-    const accuracyPercentage =
-      totalVisits > 0 ? (accurateVisits / totalVisits) * 100 : 0;
+    const accurateVisits = visitedLocations.filter(location => location.scanDistance <= accuracyThreshold).length;
+    const accuracyPercentage = (accurateVisits / totalVisits) * 100;
 
     res.status(200).json({
       salesmanId,
@@ -512,7 +495,7 @@ export const getAccuracyBySalesman = async (req: any, res: any) => {
 };
 
 //testing
-export const getAllVisitedLocations = async (req: any, res: any) => {
+export const getAllVisitedLocations = async (req: Request, res: Response) => {
   try {
     const visitedLocations = await Prisma.visitedLocation.findMany({
       include: {
@@ -526,7 +509,7 @@ export const getAllVisitedLocations = async (req: any, res: any) => {
     res.status(500).json({ error: "Failed to fetch all visited locations" });
   }
 };
-export const getAllAssignedLocations = async (req: any, res: any) => {
+export const getAllAssignedLocations = async (req: Request, res: Response) => {
   try {
     const assignedLocations = await Prisma.assignSalesman.findMany({
       include: {
@@ -541,174 +524,43 @@ export const getAllAssignedLocations = async (req: any, res: any) => {
   }
 };
 
-// distributer
-export const getAllSalesmens = async (req: Request, res: Response) => {
+//distributors
+export const getAllDistributors = async (req: Request, res: Response) => {
   try {
-    const salesmen = await Prisma.salesMan.findMany({
-      include: {
-        Manager: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-        visitedLocations: true, // Includes the locations they visited
-        AssignSalesman: {
-          include: {
-            Location: true, // Includes assigned locations
-          },
-        },
+    const distributors = await Prisma.managedLocation.findMany({
+      where: {
+        storeType: 'DISTRIBUTOR',
       },
     });
 
-    return res.status(200).json(salesmen);
+    res.status(200).json({ distributors });
   } catch (error) {
-    console.error("Error fetching salesmen list:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error fetching all distributors:", error);
+    res.status(500).json({ error: "Failed to fetch all distributors" });
   }
 };
 
-export const getDistributorSalesmenDetails = async (
-  req: Request,
-  res: Response
-) => {
+//distributor details by manager id
+export const getDistributorById = async (req: Request, res: Response) =>{
   try {
-    const { date } = req.query;
+    const { managerId } = req.params;
+    const distributorDetails = await Prisma.manager.findUnique({
+      where: {
+        id: parseInt(managerId),
+      },
+      include: {
+        ManagedLocations: true,
+        AssignSalesman:true
+      },
+    });
 
-    const dateToUse = date ? new Date(date as string) : new Date();
-
-    if (isNaN(dateToUse.getTime())) {
-      return res
-        .status(400)
-        .json({ error: "Invalid date format. Use YYYY-MM-DD." });
+    if (!distributorDetails) {
+      return res.status(404).json({ error: "Manager not found" });
     }
 
-    const salesmenData = await Prisma.salesMan.findMany({
-      where: {
-        AssignSalesman: {
-          some: {
-            Location: {
-              storeType: "DISTRIBUTOR", // Only Distributor type locations
-            },
-          },
-        },
-      },
-      include: {
-        AssignSalesman: {
-          include: {
-            Location: true, // Include location details
-          },
-        },
-        visitedLocations: {
-          where: {
-            date: {
-              gte: dateToUse, // Filter visits for today
-            },
-          },
-          orderBy: {
-            date: "asc", // Order by time to get in-time and out-time
-          },
-        },
-      },
-    });
-
-    const formattedData = salesmenData.map((salesman) => {
-      const visitedLocations = salesman.visitedLocations;
-
-      // Determine In-Time (earliest visit of the day)
-      const inTime =
-        visitedLocations.length > 0 ? visitedLocations[0].date : null;
-
-      // Determine Out-Time (latest visit if multiple)
-      const outTime =
-        visitedLocations.length > 1
-          ? visitedLocations[visitedLocations.length - 1].date
-          : null;
-
-      // Total number of outlets visited today
-      const outletsVisited = visitedLocations.length;
-
-      // Total number of assigned outlets
-      const outletsAssigned = salesman.AssignSalesman.length;
-
-      // Calculate accuracy percentage (over 100 meters non-accurate)
-      const inaccurateVisits = visitedLocations.filter(
-        (visit) => visit.scanDistance > 100
-      ).length;
-      const accuracyPercentage =
-        outletsVisited > 0
-          ? ((outletsVisited - inaccurateVisits) / outletsVisited) * 100
-          : 0;
-
-      // Calculate distance traveled
-      let totalDistance = 0;
-      for (let i = 1; i < visitedLocations.length; i++) {
-        const prev = visitedLocations[i - 1];
-        const curr = visitedLocations[i];
-
-        if (
-          prev.UserLatitude &&
-          prev.UserLongitude &&
-          curr.UserLatitude &&
-          curr.UserLongitude
-        ) {
-          totalDistance += getHaversineDistance(
-            prev.UserLatitude,
-            prev.UserLongitude,
-            curr.UserLatitude,
-            curr.UserLongitude
-          );
-        }
-      }
-
-      return {
-        salesmanName: salesman.name,
-        salesmanType: salesman.salesManType,
-        region: salesman.AssignSalesman[0]?.Location.region || "N/A",
-        state: salesman.AssignSalesman[0]?.Location.state || "N/A",
-        marketName: salesman.AssignSalesman[0]?.Location.market_name || "N/A",
-        inTime,
-        outTime,
-        outletsVisited,
-        outletsAssigned,
-        accuracyPercentage: accuracyPercentage.toFixed(2) + "%",
-        distanceTravelled: totalDistance.toFixed(2) + " km",
-      };
-    });
-
-    res.status(200).json({
-      success: true,
-      data: formattedData,
-    });
+    res.status(200).json({ distributorDetails });
   } catch (error) {
-    console.error("Error fetching distributor salesmen details:", error);
-    res.status(500).json({
-      success: false,
-      message: "Internal server error",
-    });
+    console.error("Error fetching distributor details:", error);
+    res.status(500).json({ error: "Failed to fetch distributor details" });
   }
-};
-
-// Haversine formula to calculate distance between two points
-const getHaversineDistance = (
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number => {
-  const R = 6371; // Earth's radius in km
-  const toRad = (deg: number) => (deg * Math.PI) / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-};
+}

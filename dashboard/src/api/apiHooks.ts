@@ -8,9 +8,7 @@ import {
   mockStoreCount,
   mockTimeAnalysis,
   mockVisitedLocations,
-  Salesman,
   SalesmanCountResponse,
-  Store,
   StoreCountResponse,
   TimeAnalysis,
   VisitedLocationResponse,
@@ -72,9 +70,9 @@ const useAllSalesmen = () => {
   });
 };
 
-const useAllStores = () => {
+const useAllStores = (date?: string) => {
   return useQuery<AllStoresResponse>({
-    queryKey: ["allStores"],
+    queryKey: ["allStores", date],
     queryFn: async () => {
       try {
         const response = await getAllStores();
@@ -87,12 +85,12 @@ const useAllStores = () => {
   });
 };
 
-const useVisitedLocations = () => {
+const useVisitedLocations = (date?: string) => {
   return useQuery<VisitedLocationResponse>({
-    queryKey: ["visitedLocations"],
+    queryKey: ["visitedLocations", date],
     queryFn: async () => {
       try {
-        const response = await getVisited();
+        const response = await getVisited(date);
         return response.data;
       } catch (error) {
         console.error("Error fetching visited locations:", error);
@@ -102,12 +100,12 @@ const useVisitedLocations = () => {
   });
 };
 
-const useTimeAnalysis = (salesmanId: number) => {
+const useTimeAnalysis = (salesmanId: number, date?: string) => {
   return useQuery<TimeAnalysis>({
-    queryKey: ["timeAnalysis", salesmanId],
+    queryKey: ["timeAnalysis", salesmanId, date],
     queryFn: async () => {
       try {
-        const response = await getSalesmanTimeAnalysis(salesmanId);
+        const response = await getSalesmanTimeAnalysis(salesmanId, date);
         return response.data;
       } catch (error) {
         console.error(`Error fetching time analysis for salesman ${salesmanId}:`, error);
@@ -117,12 +115,12 @@ const useTimeAnalysis = (salesmanId: number) => {
   });
 };
 
-const useAccuracy = () => {
+const useAccuracy = (startDate?: string, endDate?: string) => {
   return useQuery<Accuracy>({
-    queryKey: ["accuracy"],
+    queryKey: ["accuracy", startDate, endDate],
     queryFn: async () => {
       try {
-        const response = await getAccuracy();
+        const response = await getAccuracy(startDate, endDate);
         return response.data;
       } catch (error) {
         console.error("Error fetching accuracy:", error);

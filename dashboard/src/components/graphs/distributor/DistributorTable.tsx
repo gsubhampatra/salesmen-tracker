@@ -17,7 +17,6 @@ interface Props {
     outletsAssigned: number;
     accuracyPercentage: number;
     assignedSalesmans: number[];
-    storeType: string;
   }[];
 }
 

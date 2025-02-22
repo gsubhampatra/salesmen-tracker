@@ -20,8 +20,9 @@ export const getVisited = async () => {
   return await api.get(API_PATHS.DASHBOARD.VISITED);
 }
 
-export const getSalesmanTimeAnalysis = async (salesmanId: number) => {
-  return await api.get(API_PATHS.DASHBOARD.SALESMAN_TIME_ANALYSIS(salesmanId));
+export const getSalesmanTimeAnalysis = async (salesmanId: number, date?: string) => {
+  const queryParams = date ? `?date=${encodeURIComponent(date)}` : '';
+  return await api.get(`${API_PATHS.DASHBOARD.SALESMAN_TIME_ANALYSIS(salesmanId)}${queryParams}`);
 }
 
 export const getVisitedOutletsBySalesman = async (salesmanId: number) => {
@@ -48,8 +49,9 @@ export const getAllSalesmenReport = async () => {
   return await api.get(API_PATHS.DASHBOARD.ALL_SALESMEN_REPORT);
 }
 
-export const getAllDistributorsReport = async () => {
-  return await api.get(API_PATHS.DASHBOARD.ALL_DISTRIBUTORS_REPORT);
+export const getAllDistributorsReport = async (date?: string) => {
+  const queryParams = date ? `?date=${encodeURIComponent(date)}` : '';
+  return await api.get(`${API_PATHS.DASHBOARD.ALL_DISTRIBUTORS_REPORT}${queryParams}`);
 }
 
 export const getAccuracy = async () => {

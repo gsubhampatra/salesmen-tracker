@@ -1,22 +1,15 @@
 import React from "react";
-import { useSalesmanSummary } from "../api/apiHooks";
+import { useAllSalesmen } from "../api/apiHooks";
 import SalesmanSummaryTable from "../components/graphs/analytics/SalesmanSummaryTable";
-import { LocationAnalytic } from "../types/detailedResponseType";
 
 const SalesmanSummary: React.FC = () => {
-  const { data: salesmanSummaryData, isLoading: isLoadingSalesmanSummary } = useSalesmanSummary();
-
-  if (isLoadingSalesmanSummary) {
+  // const { data: salesmanSummaryData, isLoading: isLoadingSalesmanSummary } = useSalesmanSummary();
+ const { data:SalesmanData,isLoading } = useAllSalesmen()
+  if (isLoading) {
     return <div className="flex justify-center items-center h-screen text-xl font-semibold text-gray-600">Loading...</div>;
   }
+   const data = SalesmanData?.allSalesmen || []
 
-  const transformedData = (salesmanSummaryData?.data ?? []).map((item: LocationAnalytic) => ({
-    ...item,
-    inTime: item.inTime ?? 0, // Ensure inTime is always a number
-    outTime: item.outTime ?? 0, // Ensure outTime is always a number
-    accuracyDistance: item.accuracyDistance ? parseFloat(item.accuracyDistance) : 0, // Ensure accuracyDistance is always a number
-  }));
-  
   return (
     <div className="p-6 md:p-10 bg-gray-100 min-h-screen">
       {/* Heading with Icon */}
@@ -30,7 +23,7 @@ const SalesmanSummary: React.FC = () => {
 
       {/* Salesman Summary Table */}
       <div className="mt-8">
-        <SalesmanSummaryTable data={transformedData} />
+        <SalesmanSummaryTable data={data} />
       </div>
     </div>
   );

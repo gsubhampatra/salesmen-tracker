@@ -569,153 +569,91 @@ export const getAllSalesmens = async (req: Request, res: Response) => {
   }
 };
 
-export const getDistributorSalesmenDetails = async (
-  req: Request,
-  res: Response
-) => {
+export async function getDistributorReport(req: Request, res: Response) {
   try {
-    const { date } = req.query;
+    const date = req.query?.date
+      ? new Date(req.query.date as string)
+      : new Date();
 
-    const dateToUse = date ? new Date(date as string) : new Date();
+    // Get start and end of the queried date
+    const startDate = new Date(date.setHours(0, 0, 0, 0));
+    const endDate = new Date(date.setHours(23, 59, 59, 999));
 
-    if (isNaN(dateToUse.getTime())) {
-      return res
-        .status(400)
-        .json({ error: "Invalid date format. Use YYYY-MM-DD." });
-    }
-
-    const salesmenData = await Prisma.salesMan.findMany({
+    // Fetch all distributor locations
+    const distributors = await Prisma.managedLocation.findMany({
       where: {
-        AssignSalesman: {
-          some: {
-            Location: {
-              storeType: "DISTRIBUTOR", // Only Distributor type locations
-            },
-          },
-        },
+        storeType: "DISTRIBUTOR",
       },
       include: {
-        AssignSalesman: {
-          include: {
-            Location: true, // Include location details
-          },
-        },
-        visitedLocations: {
+        Manager: true,
+        VisitedLocation: {
           where: {
             date: {
-              gte: dateToUse, // Filter visits for today
+              gte: startDate,
+              lte: endDate,
             },
           },
           orderBy: {
-            date: "asc", // Order by time to get in-time and out-time
+            date: "asc", // Sorting by time for in-time & out-time calculation
           },
         },
+        AssignSalesman: true,
       },
     });
 
-    const formattedData = salesmenData.map((salesman) => {
-      const visitedLocations = salesman.visitedLocations;
+    const analytics = distributors.map((location) => {
+      const visits = location.VisitedLocation;
+      const assignments = location.AssignSalesman;
 
-      // Determine In-Time (earliest visit of the day)
-      const inTime =
-        visitedLocations.length > 0 ? visitedLocations[0].date : null;
+      const inTime = visits.length > 0 ? visits[0].date : null;
 
-      // Determine Out-Time (latest visit if multiple)
-      const outTime =
-        visitedLocations.length > 1
-          ? visitedLocations[visitedLocations.length - 1].date
-          : null;
+      const outTime = visits.length > 0 ? visits[visits.length - 1].date : null;
 
-      // Total number of outlets visited today
-      const outletsVisited = visitedLocations.length;
+      // No. of Outlets Visited
+      const outletsVisited = visits.length;
 
-      // Total number of assigned outlets
-      const outletsAssigned = salesman.AssignSalesman.length;
+      // No. of Outlets Assigned
+      const outletsAssigned = assignments.length;
 
-      // Calculate accuracy percentage (over 100 meters non-accurate)
-      const inaccurateVisits = visitedLocations.filter(
-        (visit) => visit.scanDistance > 100
+      // Accuracy Calculation (Over 100m non-accurate)
+      const accurateVisits = visits.filter(
+        (visit) => visit.scanDistance <= 100
       ).length;
-      const accuracyPercentage =
-        outletsVisited > 0
-          ? ((outletsVisited - inaccurateVisits) / outletsVisited) * 100
-          : 0;
-
-      // Calculate distance traveled
-      let totalDistance = 0;
-      for (let i = 1; i < visitedLocations.length; i++) {
-        const prev = visitedLocations[i - 1];
-        const curr = visitedLocations[i];
-
-        if (
-          prev.UserLatitude &&
-          prev.UserLongitude &&
-          curr.UserLatitude &&
-          curr.UserLongitude
-        ) {
-          totalDistance += getHaversineDistance(
-            prev.UserLatitude,
-            prev.UserLongitude,
-            curr.UserLatitude,
-            curr.UserLongitude
-          );
-        }
-      }
+      const accuracyPercentage = (accurateVisits / visits.length) * 100;
 
       return {
-        salesmanName: salesman.name,
-        salesmanType: salesman.salesManType,
-        region: salesman.AssignSalesman[0]?.Location.region || "N/A",
-        state: salesman.AssignSalesman[0]?.Location.state || "N/A",
-        marketName: salesman.AssignSalesman[0]?.Location.market_name || "N/A",
-        inTime,
-        outTime,
+        storeName: location.name,
+        marketName: location.market_name,
+        address: location.address,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        managerName: location.Manager.name,
+        region: location.region,
+        state: location.state,
+        inTime: inTime
+          ? Math.round(inTime.getHours() * 60 + inTime.getMinutes())
+          : null, // Convert time to minutes
+        outTime: outTime
+          ? Math.round(outTime.getHours() * 60 + outTime.getMinutes())
+          : null,
         outletsVisited,
         outletsAssigned,
-        accuracyPercentage: accuracyPercentage.toFixed(2) + "%",
-        distanceTravelled: totalDistance.toFixed(2) + " km",
+        accuracyPercentage: Math.round(accuracyPercentage * 100) / 100,
+        assignedSalesmans: assignments.map((a) => a.salesManId),
       };
     });
+    console.log(distributors[0]);
 
-    res.status(200).json({
+    res.json({
       success: true,
-      data: formattedData,
+      data: analytics,
     });
   } catch (error) {
-    console.error("Error fetching distributor salesmen details:", error);
+    console.error("Error fetching distributor analytics:", error);
     res.status(500).json({
       success: false,
-      message: "Internal server error",
+      error: "Failed to fetch distributor analytics",
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
-};
-
-
-const getHaversineDistance = (
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number => {
-  const R = 6371; // Earth's radius in km
-  const toRad = (deg: number) => (deg * Math.PI) / 180;
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-      Math.cos(toRad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-};
-
-
-
-
-
-
-
+}

@@ -13,7 +13,7 @@ import {
   getAllVisitedLocations,
   getAllAssignedLocations,
   getAllSalesmens,
-  getDistributorSalesmenDetails,
+  getDistributorReport,
 } from "../../controller/dashboard/dashboardController";
 import { getAccuracyOverTime, getAverageVisitDuration, getAverageVisitDurationOverTime, getDistributorAnalytics, getDistributors, getDistributorsWithNoVisits, getMaxDistanceTraveled, getMostActiveSalesman, getOverallAccuracyPercentage, getPeakVisitingHours, getSalesmanAccuracy, getSalesmanProductivity, getTotalDistributors, getTotalOutletsAssigned, getTotalOutletsVisited, getUniqueSalesmen, getVisitsPerDistributor } from "../../controller/dashboard/distributorController";
 import { getOverallAccuracy, getTotalLocationsManaged, getTotalSalesmen, getTotalVisitsMade , getPeakVisitingHour, getMostVisitedLocations, getAverageVisitDurations, getRegionWiseSalesmanCount, getStateWiseVisitDistribution, gettotalOutletsAssigned, gettotalOutletsVisited, getLocationAnalytics, getMostVisitedLocation} from "../../controller/dashboard/detailedAnalysisController";
@@ -45,7 +45,7 @@ router.get("/getallvisits", getAllVisitedLocations);
 router.get("/getAllAssignedLocations", getAllAssignedLocations);
 
 router.get("/getallsalesmansReport", getAllSalesmens);
-router.get("/getdistributorReport", getDistributorSalesmenDetails);
+router.get("/getdistributorReport", getDistributorReport);
 
 // Distributor Routes
 router.get("/getDistributors", getDistributors)

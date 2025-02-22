@@ -6,11 +6,9 @@ import {
   LayoutDashboard,
   Building2,
   Menu,
-  ChevronDown,
-  ChevronUp,
   LucideIcon,
   User,
-  BarChart3
+  BarChart3,
 } from "lucide-react";
 
 interface SidebarLink {
@@ -27,18 +25,19 @@ const Sidebar = ({
   setIsExpanded: (value: boolean) => void;
 }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  // const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const location = useLocation();
 
   const links: SidebarLink[] = [
     { title: "Dashboard", path: "/", icon: LayoutDashboard },
-    { title: "Detailed Analysis", path: "/detailed-analysis", icon: BarChart3 },
-    { title: "Salesman Summary", path: "/Salesman-Summary", icon: User },
+    { title: "All Reports ", path: "/detailed-analysis", icon: BarChart3 },
+    { title: "Salesman Reports ", path: "/Salesman-Summary", icon: User },
+    { title: "Distributor Reports", path: "/distributor", icon: Building2 },
   ];
 
-  const dropdownLinks: SidebarLink[] = [
-    { title: "Distributors", path: "/distributor", icon: Building2 },
-  ];
+  // const dropdownLinks: SidebarLink[] = [
+  //   { title: "Distributors", path: "/distributor", icon: Building2 },
+  // ];
 
   const isActivePath = (path: string) => location.pathname === path;
 
@@ -67,7 +66,11 @@ const Sidebar = ({
           fixed top-0 left-0 h-screen bg-white border-r border-gray-200
           transition-all duration-300 ease-in-out z-50
           ${isExpanded ? "w-64" : "w-20"}
-          ${isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+          ${
+            isMobileOpen
+              ? "translate-x-0"
+              : "-translate-x-full md:translate-x-0"
+          }
         `}
       >
         {/* Logo Section */}
@@ -89,7 +92,11 @@ const Sidebar = ({
             onClick={() => setIsExpanded(!isExpanded)}
             className="hidden md:block hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
           >
-            {isExpanded ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+            {isExpanded ? (
+              <ChevronLeft size={20} />
+            ) : (
+              <ChevronRight size={20} />
+            )}
           </button>
         </div>
 
@@ -104,14 +111,22 @@ const Sidebar = ({
                 className={`
                   flex items-center gap-3 px-3 py-3 rounded-lg transition-colors
                   hover:bg-gray-100 group relative
-                  ${isActivePath(link.path) ? "bg-blue-50 text-blue-600" : "text-gray-600"}
+                  ${
+                    isActivePath(link.path)
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-600"
+                  }
                 `}
                 onClick={() => setIsMobileOpen(false)} // Close sidebar on mobile when a link is clicked
               >
                 <div className="flex items-center justify-center w-6">
                   <Icon
                     size={22}
-                    className={isActivePath(link.path) ? "text-blue-600" : "text-gray-600"}
+                    className={
+                      isActivePath(link.path)
+                        ? "text-blue-600"
+                        : "text-gray-600"
+                    }
                   />
                 </div>
                 <span
@@ -122,9 +137,7 @@ const Sidebar = ({
                   {link.title}
                 </span>
                 {!isExpanded && (
-                  <div
-                    className="absolute px-2 py-1 ml-2 text-sm text-white transition-opacity bg-gray-800 rounded-md opacity-0 pointer-events-none  left-full whitespace-nowrap group-hover:opacity-100"
-                  >
+                  <div className="absolute px-2 py-1 ml-2 text-sm text-white transition-opacity bg-gray-800 rounded-md opacity-0 pointer-events-none left-full whitespace-nowrap group-hover:opacity-100">
                     {link.title}
                   </div>
                 )}
@@ -133,7 +146,7 @@ const Sidebar = ({
           })}
 
           {/* Section-Wise Reports Dropdown - Hidden when Sidebar is Collapsed */}
-          {isExpanded && (
+          {/* {isExpanded && (
             <div className="mt-3">
               <button
                 type="button"
@@ -141,10 +154,14 @@ const Sidebar = ({
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               >
                 <span className="font-medium">Section-Wise Reports</span>
-                {isDropdownOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
+                {isDropdownOpen ? (
+                  <ChevronUp size={20} />
+                ) : (
+                  <ChevronDown size={20} />
+                )}
               </button>
 
-              {/* Dropdown Links */}
+              Dropdown Links
               {isDropdownOpen && (
                 <div className="pl-4 mt-1">
                   {dropdownLinks.map((link) => {
@@ -156,24 +173,34 @@ const Sidebar = ({
                         className={`
                           flex items-center gap-3 px-3 py-3 rounded-lg transition-colors
                           hover:bg-gray-100 group relative
-                          ${isActivePath(link.path) ? "bg-blue-50 text-blue-600" : "text-gray-600"}
+                          ${
+                            isActivePath(link.path)
+                              ? "bg-blue-50 text-blue-600"
+                              : "text-gray-600"
+                          }
                         `}
                         onClick={() => setIsMobileOpen(false)}
                       >
                         <div className="flex items-center justify-center w-6">
                           <Icon
                             size={22}
-                            className={isActivePath(link.path) ? "text-blue-600" : "text-gray-600"}
+                            className={
+                              isActivePath(link.path)
+                                ? "text-blue-600"
+                                : "text-gray-600"
+                            }
                           />
                         </div>
-                        <span className="font-medium whitespace-nowrap">{link.title}</span>
+                        <span className="font-medium whitespace-nowrap">
+                          {link.title}
+                        </span>
                       </Link>
                     );
                   })}
                 </div>
               )}
             </div>
-          )}
+          )} */}
         </nav>
       </aside>
     </>

@@ -2,7 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import {
   Accuracy,
   mockAccuracy,
-  mockAllSalesmen,
   mockAllStores,
   mockSalesmenCount,
   mockStoreCount,
@@ -29,6 +28,7 @@ import {
   SalesmanProductivityResponse,
   AverageVisitDurationOverTimeResponse,
   AccuracyOverTimeResponse,
+  DistributorReportResponse,
 } from "../types/responseTypes";
 import {
   getSalesmenCount,
@@ -54,6 +54,7 @@ import {
   getAvgVisitDurationOvertime,
   getAccuracyOverTime,
   getSalesmanSummary,
+  getAllDistributorsReport,
 } from "./apiFunctions";
 import { LocationAnalyticResponse } from "../types/detailedResponseType";
 
@@ -96,7 +97,6 @@ const useAllSalesmen = () => {
         return response.data;
       } catch (error) {
         console.error("Error fetching all salesmen:", error);
-        return mockAllSalesmen; // Provide mock data on error
       }
     },
   });
@@ -132,12 +132,12 @@ const useVisitedLocations = () => {
   });
 };
 
-const useTimeAnalysis = (salesmanId: number) => {
+const useTimeAnalysis = (salesmanId: number, date: string) => {
   return useQuery<TimeAnalysis>({
-    queryKey: ["timeAnalysis", salesmanId],
+    queryKey: ["timeAnalysis", salesmanId,date],
     queryFn: async () => {
       try {
-        const response = await getSalesmanTimeAnalysis(salesmanId);
+        const response = await getSalesmanTimeAnalysis(salesmanId, date);
         return response.data;
       } catch (error) {
         console.error(`Error fetching time analysis for salesman ${salesmanId}:`, error);
@@ -157,6 +157,21 @@ const useAccuracy = () => {
       } catch (error) {
         console.error("Error fetching accuracy:", error);
         return mockAccuracy; // Provide mock data on error
+      }
+    },
+  });
+};
+
+export const useDistributorReport = (date?: string) => {
+  return useQuery<DistributorReportResponse>({
+    queryKey: ["distributorReport", date],
+    queryFn: async () => {
+      try {
+        const response = await getAllDistributorsReport(date);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching distributor analytics:", error);
+        return  // Provide mock data
       }
     },
   });

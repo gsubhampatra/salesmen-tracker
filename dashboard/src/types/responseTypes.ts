@@ -95,6 +95,28 @@ export interface Accuracy {
   accurateVisits: number;
 }
 
+export interface DistributorReport {
+  storeName: string;
+  marketName: string;
+  address: string;
+  latitude: number;
+  longitude: number;
+  managerName: string;
+  region: string;
+  state: string;
+  inTime: number | null;
+  outTime: number | null;
+  outletsVisited: number;
+  outletsAssigned: number;
+  accuracyPercentage: number;
+  assignedSalesmans: number[];
+}
+
+export interface DistributorReportResponse {
+  success: boolean;
+  data: DistributorReport[];
+}
+
 export interface DistributorAnalytics {
   region: string;
   state: string;

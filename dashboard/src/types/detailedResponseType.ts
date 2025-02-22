@@ -1,3 +1,4 @@
+import { Salesman } from "./responseTypes";
 
 export interface TotalSalesmenResponse {
     totalSalesmen: number;
@@ -64,18 +65,21 @@ export interface TotalSalesmenResponse {
   }
 
   export interface LocationAnalytics {
+    storeName: string;
     storeType: string;
     region: string;
     state: string;
-    salesmanType: string;
-    inTime: number | null;
+    address: string;
+    inTime: number;
     outTime: number | null;
     outletsVisited: number;
     outletsAssigned: number;
     accuracyPercentage: number;
-    locationName: string;
+    accuracyDistance: number;
+    visited: string;
     marketName: string;
-    salesmanName: string;
+    assignedSalesmans: Salesman[];
+    visitedSalesmans: Salesman[];
   }
   
   export interface LocationAnalyticsResponse {

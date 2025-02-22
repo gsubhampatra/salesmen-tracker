@@ -154,7 +154,7 @@ const useLocationAnalytics = (date?: string) => {
   return useQuery<LocationAnalyticsResponse>({
     queryKey: ["locationAnalytics", date],
     queryFn: async () => {
-      const response = await getLocationAnalytics();
+      const response = await getLocationAnalytics(date);
       return response.data;
     },
   });

@@ -1,5 +1,5 @@
-import React from "react";
-import { BarChart3 } from "lucide-react";
+import React, { useState } from "react";
+import { BarChart3, Calendar } from "lucide-react";
 
 import {
   useTotalSalesmen,
@@ -11,7 +11,7 @@ import {
   useAverageVisitDurations,
   useTotalOutletsAssigned,
   useTotalOutletsVisited,
-  useLocationAnalytics
+  useLocationAnalytics,
 } from "../hooks/detailedAnalyticsHooks";
 import {
   TotalSalesmenCard,
@@ -27,6 +27,8 @@ import {
 import LocationAnalyticsTable from "../components/graphs/analytics/AnalyticsTable";
 
 const DetailedAnalysis: React.FC = () => {
+  const [date, setDate] = useState<Date>(new Date());
+
   const { data: totalSalesmenData, isLoading: isLoadingTotalSalesmen } = useTotalSalesmen();
   const { data: totalLocationsManagedData, isLoading: isLoadingTotalLocationsManaged } = useTotalLocationsManaged();
   const { data: totalVisitsMadeData, isLoading: isLoadingTotalVisitsMade } = useTotalVisitsMade();
@@ -36,7 +38,7 @@ const DetailedAnalysis: React.FC = () => {
   const { data: averageVisitDurationsData, isLoading: isLoadingAverageVisitDurations } = useAverageVisitDurations();
   const { data: totalOutletsAssignedData, isLoading: isLoadingTotalOutletsAssigned } = useTotalOutletsAssigned();
   const { data: totalOutletsVisitedData, isLoading: isLoadingTotalOutletsVisited } = useTotalOutletsVisited();
-  const { data: locationAnalyticsData, isLoading: isLoadingLocationAnalytics } = useLocationAnalytics();
+  const { data: locationAnalyticsData, isLoading: isLoadingLocationAnalytics } = useLocationAnalytics(date?.toISOString().split("T")[0]);
 
   if (
     isLoadingTotalSalesmen ||
@@ -50,24 +52,34 @@ const DetailedAnalysis: React.FC = () => {
     isLoadingTotalOutletsVisited ||
     isLoadingLocationAnalytics
   ) {
-    return <div className="flex justify-center items-center h-screen text-xl font-semibold text-gray-600">Loading...</div>;
+    return <div className="flex items-center justify-center h-screen text-xl font-semibold text-gray-600">Loading...</div>;
   }
 
   return (
-    <div className="p-6 md:p-10 bg-gray-100 min-h-screen">
+    <div className="min-h-screen p-6 bg-gray-100 md:p-10">
       {/* Heading with Icon */}
-      <div className="text-center mb-8">
-      <h1 className="text-4xl md:text-5xl font-extrabold text-blue-800 flex justify-center items-center gap-3">
-  <BarChart3 className="text-yellow-500 animate-pulse w-10 h-10" />
-  <span className="bg-gradient-to-r from-blue-700 via-blue-500 to-blue-300 text-transparent bg-clip-text drop-shadow-lg">
-    Detailed Analysis
-  </span>
-</h1>
+      <div className="mb-8 text-center">
+        <h1 className="flex items-center justify-center gap-3 text-4xl font-extrabold text-blue-800 md:text-5xl">
+          <BarChart3 className="w-10 h-10 text-yellow-500 animate-pulse" />
+          <span className="text-transparent bg-gradient-to-r from-blue-700 via-blue-500 to-blue-300 bg-clip-text drop-shadow-lg">
+            Detailed Analysis
+          </span>
+        </h1>
 
+        {/* Date Filter */}
+        <div className="flex items-center justify-center gap-3">
+          <Calendar className="w-6 h-6 text-gray-600" />
+          <input
+            type="date"
+            value={date?.toISOString().split("T")[0] ?? ""}
+            onChange={(e) => setDate(e.target.valueAsDate || new Date())}
+            className="p-2 pl-10 text-gray-700 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring focus:ring-indigo-200 focus:border-indigo-500"
+          />
+        </div>
       </div>
 
       {/* Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 gap-6 mb-6 md:grid-cols-2 lg:grid-cols-3">
         <TotalSalesmenCard data={totalSalesmenData ?? { totalSalesmen: 0 }} />
         <TotalLocationsManagedCard data={totalLocationsManagedData ?? { totalLocations: 0 }} />
         <TotalVisitsMadeCard data={totalVisitsMadeData ?? { totalVisits: 0 }} />
@@ -80,8 +92,7 @@ const DetailedAnalysis: React.FC = () => {
       </div>
 
       {/* Location Analytics Table */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
-       
+      <div className="p-6 bg-white rounded-lg shadow-md">
         <LocationAnalyticsTable data={locationAnalyticsData?.data ?? []} />
       </div>
     </div>
@@ -89,3 +100,4 @@ const DetailedAnalysis: React.FC = () => {
 };
 
 export default DetailedAnalysis;
+

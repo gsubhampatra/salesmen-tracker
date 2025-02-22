@@ -175,8 +175,9 @@ export const gettotalOutletsVisited = async () => {
   return await api.get(API_PATHS.DASHBOARD.DETAILED_ANALYTICS.GET_TOTAL_OUTLETS_VISITED);
 }
 
-export const getLocationAnalytics = async () => {
-  return await api.get(API_PATHS.DASHBOARD.DETAILED_ANALYTICS.GET_LOCATION_ANALYTICS);
+export const getLocationAnalytics = async (date?: string) => {
+  const queryParams = date ? `?date=${encodeURIComponent(date)}` : '';
+  return await api.get(`${API_PATHS.DASHBOARD.DETAILED_ANALYTICS.GET_LOCATION_ANALYTICS}${queryParams}`);
 }
 
 export const getSalesmanSummary = async () => {

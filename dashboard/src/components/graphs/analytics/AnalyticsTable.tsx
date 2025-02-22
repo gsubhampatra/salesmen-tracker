@@ -1,194 +1,177 @@
-import React, { useState } from 'react';
-import { 
-  MapPin, 
-  Building2, 
-  Timer,
-  CheckCircle2,
-  Store,
-  User,
-  UserCog
-} from 'lucide-react';
-
-interface LocationAnalytics {
-  storeType: string;
-  region: string;
-  state: string;
-  salesmanType: string;
-  inTime: number | null;
-  outTime: number | null;
-  outletsVisited: number;
-  outletsAssigned: number;
-  accuracyPercentage: number;
-  salesmanName: string;
-}
+import React, { useState, useMemo } from "react";
+import { LocationAnalytics } from "../../../types/detailedResponseType";
 
 interface LocationAnalyticsTableProps {
   data: LocationAnalytics[];
 }
 
+// Enum for Salesman Type
+enum SalesManType {
+  VANSALES = "VANSALES",
+  PRESELLER = "PRESELLER",
+  MERCHANDISER = "MERCHANDISER",
+  DELIVERY = "DELIVERY",
+}
+
+// Enum for Store Type
+enum StoreType {
+  RETAILER = "RETAILER",
+  DISTRIBUTOR = "DISTRIBUTOR",
+  WHOLESALER = "WHOLESALER",
+}
+
 const LocationAnalyticsTable: React.FC<LocationAnalyticsTableProps> = ({ data }) => {
-  const [sortConfig, _] = useState<{
-    key: keyof LocationAnalytics | '';
-    direction: 'asc' | 'desc';
-  }>({ key: '', direction: 'asc' });
+  const [filters, setFilters] = useState({
+    salesmanType: "",
+    storeType: "",
+    state: "",
+    region: "",
+  });
 
-  const formatTime = (time: number | null) => {
-    if (!time) return "—";
-    const date = new Date(time);
-    return date.toLocaleTimeString('en-US', { 
-      hour: '2-digit', 
-      minute: '2-digit',
-      hour12: true 
-    });
+  const handleFilterChange = (key: string, value: string) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
-  // const handleSort = (key: keyof LocationAnalytics) => {
-  //   const direction = sortConfig.key === key && sortConfig.direction === 'asc' ? 'desc' : 'asc';
-  //   setSortConfig({ key, direction });
-  // };
-
-  const sortedData = React.useMemo(() => {
-    if (!sortConfig.key) return data;
-  
-    return [...data].sort((a, b) => {
-      const key = sortConfig.key!; // Assert that key is not null
-      const aValue = key ? a[key] : '';
-      const bValue = key ? b[key] : '';
-  
-      if (aValue === null || bValue === null) {
-        return 0;
-      }
-      return (aValue < bValue ? -1 : 1) * (sortConfig.direction === 'asc' ? 1 : -1);
-    });
-  }, [data, sortConfig]);
-
-  const getProgressBarColor = (percentage: number) => {
-    if (percentage >= 90) return 'bg-emerald-500';
-    if (percentage >= 70) return 'bg-amber-500';
-    return 'bg-red-500';
-  };
+  // Filtering logic
+  const filteredData = useMemo(() => {
+    return data.filter(
+      (row) =>
+        (!filters.salesmanType ||
+          row.assignedSalesmans?.some((s) => s.salesManType === filters.salesmanType)) &&
+        (!filters.storeType || row.storeType === filters.storeType) &&
+        (!filters.state || row.state === filters.state) &&
+        (!filters.region || row.region === filters.region)
+    );
+  }, [data, filters]);
 
   return (
-    <div className="bg-white border rounded-lg shadow-lg border-slate-200">
-      <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-        <h2 className="text-xl font-semibold text-slate-800">Analytics Table</h2>
+    <div className="overflow-hidden bg-white border rounded-lg shadow-md">
+      {/* Header Section */}
+      <div className="flex items-center justify-between p-4 border-b bg-slate-50">
+        <h2 className="text-xl font-semibold text-slate-800">
+          Location Analytics
+        </h2>
+        <div className="flex gap-4">
+          {/* Salesman Type Filter */}
+          <select
+            onChange={(e) => handleFilterChange("salesmanType", e.target.value)}
+            className="px-3 py-2 text-sm bg-white border rounded-lg shadow-sm"
+          >
+            <option value="">All Salesman Types</option>
+            {Object.values(SalesManType).map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+
+          {/* Store Type Filter */}
+          <select
+            onChange={(e) => handleFilterChange("storeType", e.target.value)}
+            className="px-3 py-2 text-sm bg-white border rounded-lg shadow-sm"
+          >
+            <option value="">All Store Types</option>
+            {Object.values(StoreType).map((type) => (
+              <option key={type} value={type}>
+                {type}
+              </option>
+            ))}
+          </select>
+
+          {/* State Filter */}
+          <select
+            onChange={(e) => handleFilterChange("state", e.target.value)}
+            className="px-3 py-2 text-sm bg-white border rounded-lg shadow-sm"
+          >
+            <option value="">All States</option>
+            {[...new Set(data.map((row) => row.state))].map((state) => (
+              <option key={state} value={state}>
+                {state}
+              </option>
+            ))}
+          </select>
+
+          {/* Region Filter */}
+          <select
+            onChange={(e) => handleFilterChange("region", e.target.value)}
+            className="px-3 py-2 text-sm bg-white border rounded-lg shadow-sm"
+          >
+            <option value="">All Regions</option>
+            {[...new Set(data.map((row) => row.region))].map((region) => (
+              <option key={region} value={region}>
+                {region}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
-      <div className="max-h-[600px] overflow-y-auto">
-        <table className="w-full">
-          <thead className="sticky top-0 bg-white shadow-sm">
-            <tr className="border-b border-slate-200">
-              <th className="px-6 py-4">
-                <div className="flex items-center gap-2 " >
-                  <MapPin className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm font-semibold text-slate-700">Region/State</span>
-                 
-                </div>
-              </th>
-              <th className="px-6 py-4">
-                <div className="flex items-center gap-2">
-                  <Store className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm font-semibold text-slate-700">Store Type</span>
-                </div>
-              </th>
-              <th className="px-6 py-4">
-                <div className="flex items-center gap-2">
-                  <User className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm font-semibold text-slate-700">Salesman Name</span>
-                </div>
-              </th>
-              <th className="px-6 py-4">
-                <div className="flex items-center gap-2">
-                  <UserCog className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm font-semibold text-slate-700">Salesman Type</span>
-                </div>
-              </th>
-              <th className="px-6 py-4">
-                <div className="flex items-center gap-2">
-                  <Timer className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm font-semibold text-slate-700">Timing</span>
-                </div>
-              </th>
-              <th className="px-6 py-4">
-                <div className="flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm font-semibold text-slate-700">Outlets</span>
-                </div>
-              </th>
-              <th className="px-6 py-4">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-blue-600" />
-                  <span className="text-sm font-semibold text-slate-700">Accuracy</span>
-                </div>
-              </th>
+
+      {/* Table Section */}
+      <div className="overflow-x-auto max-h-[600px]">
+        <table className="w-full border-collapse">
+          <thead className="sticky top-0 bg-white shadow-md">
+            <tr className="border-b bg-slate-100">
+              {[
+                "Store Name",
+                "Store Type",
+                "Region",
+                "State",
+                "Salesmen Assigned",
+                "Salesmen Visited",
+                "In Time",
+                "Out Time",
+                "Outlets",
+                "Accuracy",
+              ].map((header) => (
+                <th
+                  key={header}
+                  className="px-4 py-3 text-sm font-semibold text-left text-slate-700"
+                >
+                  {header}
+                </th>
+              ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200">
-            {sortedData.map((row, index) => (
-              <tr key={index} className="hover:bg-slate-50">
-                <td className="px-6 py-4">
-                  <div className="flex flex-col">
-                    <span className="font-medium text-slate-900">{row.region}</span>
-                    <span className="text-sm text-slate-500">{row.state}</span>
-                  </div>
+          <tbody className="divide-y">
+            {filteredData.map((row, index) => (
+              <tr
+                key={index}
+                className="transition duration-200 hover:bg-slate-50"
+              >
+                <td className="px-4 py-3 font-medium text-slate-900">
+                  {row.storeName}
                 </td>
-                <td className="px-6 py-4">
-                  <span className="inline-flex items-center px-3 py-1 text-sm font-medium text-blue-700 border border-blue-100 rounded-full bg-blue-50">
-                    {row.storeType}
-                  </span>
+                <td className="px-4 py-3 text-blue-700">{row.storeType}</td>
+                <td className="px-4 py-3">{row.region}</td>
+                <td className="px-4 py-3">{row.state}</td>
+                <td className="px-4 py-3">
+                  {(row.assignedSalesmans?.length ?? 0) === 0 ? "—" : row.assignedSalesmans?.map((s) => s.name).join(", ") ?? "—"}
                 </td>
-                <td className="px-6 py-4">
-                  <span className="font-medium text-slate-900">{row.salesmanName}</span>
+                <td className="px-4 py-3">
+                  {(row.visitedSalesmans?.length ?? 0) === 0 ? "—" : row.visitedSalesmans?.map((s) => s.name).join(", ") ?? "—"}
                 </td>
-                <td className="px-6 py-4">
-                  <span className="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full bg-slate-100 text-slate-700">
-                    {row.salesmanType}
-                  </span>
+                <td className="px-4 py-3">
+                  {row.inTime ? new Date(row.inTime).toLocaleTimeString() : "—"}
                 </td>
-                <td className="px-6 py-4">
-                  <div className="p-3 space-y-2 rounded-lg bg-slate-100">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-slate-500">IN</span>
-                      <span className="text-sm font-medium text-slate-700">{formatTime(row.inTime)}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-slate-500">OUT</span>
-                      <span className="text-sm font-medium text-slate-700">{formatTime(row.outTime)}</span>
-                    </div>
-                  </div>
+                <td className="px-4 py-3">
+                  {row.outTime ? new Date(row.outTime).toLocaleTimeString() : "—"}
                 </td>
-                <td className="px-6 py-4">
-                  <div className="p-3 rounded-lg bg-slate-100">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-slate-700">
-                        {row.outletsVisited} / {row.outletsAssigned}
-                      </span>
-                    </div>
-                    <div className="w-full h-2 rounded-full bg-slate-200">
-                      <div 
-                        className="h-2 bg-blue-600 rounded-full" 
-                        style={{ width: `${(row.outletsVisited / row.outletsAssigned) * 100}%` }}
-                      />
-                    </div>
-                  </div>
+                <td className="px-4 py-3 text-center">
+                  {row.outletsVisited} / {row.outletsAssigned}
                 </td>
-                <td className="px-6 py-4">
-                  <div className="p-3 rounded-lg bg-slate-100">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm font-medium text-slate-700">{row.accuracyPercentage}%</span>
-                    </div>
-                    <div className="w-full h-2 rounded-full bg-slate-200">
-                      <div 
-                        className={`h-2 rounded-full ${getProgressBarColor(row.accuracyPercentage)}`}
-                        style={{ width: `${row.accuracyPercentage}%` }}
-                      />
-                    </div>
-                  </div>
+                <td className="px-4 py-3 font-semibold text-center">
+                  {row.accuracyPercentage}%
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {/* No Data Message */}
+      {filteredData.length === 0 && (
+        <div className="py-6 text-center text-gray-500">No data found.</div>
+      )}
     </div>
   );
 };

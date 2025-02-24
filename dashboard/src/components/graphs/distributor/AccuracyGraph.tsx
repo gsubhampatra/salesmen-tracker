@@ -13,8 +13,12 @@ interface AccuracyOverTimeProps {
 }
 
 const AccuracyOverTime = ({ data }: AccuracyOverTimeProps) => {
+  const formattedLabels = data.map((entry) =>
+    new Date(entry.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+  );
+
   const chartData = {
-    labels: data.map((entry) => entry.date),
+    labels: formattedLabels,
     datasets: [
       {
         label: "Accuracy (%)",
@@ -47,6 +51,10 @@ const AccuracyOverTime = ({ data }: AccuracyOverTimeProps) => {
         },
       },
       tooltip: {
+        callbacks: {
+          label: (tooltipItem: any) => `Accuracy: ${tooltipItem.raw}%`,
+          title: (tooltipItems: any) => `Date: ${data[tooltipItems[0].dataIndex].date}`,
+        },
         backgroundColor: "#222",
         titleColor: "#fff",
         bodyColor: "#fff",
@@ -61,6 +69,9 @@ const AccuracyOverTime = ({ data }: AccuracyOverTimeProps) => {
           font: {
             size: 12,
           },
+          autoSkip: false, // Ensure all labels are shown
+          maxRotation: 45, // Rotate labels if necessary
+          minRotation: 0,
         },
         grid: {
           display: false,

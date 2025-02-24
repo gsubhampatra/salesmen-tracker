@@ -66,10 +66,10 @@ export interface TotalSalesmenResponse {
   export interface LocationAnalytics {
     storeType: string;
     region: string;
-    state: string;
+    state: string[];
     salesmanType: string;
-    inTime: number | null;
-    outTime: number | null;
+    inTime: string | null;
+    outTime: string | null;
     outletsVisited: number;
     outletsAssigned: number;
     accuracyPercentage: number;

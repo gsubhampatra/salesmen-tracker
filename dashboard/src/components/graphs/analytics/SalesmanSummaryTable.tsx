@@ -165,7 +165,7 @@ const LocationAnalyticsTable: React.FC<LocationAnalyticsTableProps> = ({ data })
                   <td className="p-4">
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 rounded-full bg-cyan-100 flex items-center justify-center">
-                        {row.salesmanName.charAt(0)}
+                      <span className="font-medium">{row.salesmanName || 'N/A'}</span>
                       </div>
                       <span className="font-medium">{row.salesmanName}</span>
                     </div>

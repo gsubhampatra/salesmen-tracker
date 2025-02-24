@@ -33,8 +33,6 @@ export const API_PATHS = {
       GET_DISTRIBUTORS: "/getDistributors",
       GET_DISTRIBUTOR_ANALYTICS: "/getDistributorAnalytics",
       GET_TOTAL_DISTRIBUTORS: "/gettotaldistributors",
-      GET_TOTAL_OUTLETS_ASSIGNED: "/getTotalOutletsAssigned",
-      GET_TOTAL_OUTLETS_VISITED: "/getTotalOutletsVisited",
       GET_OVERALL_ACCURACY: "/getOverallAccuracy",
       GET_AVERAGE_VISIT_DURATION: "/getAverageVisitDuration",
       GET_MAX_DISTANCE_TRAVELED: "/getMaxDistanceTravelled",

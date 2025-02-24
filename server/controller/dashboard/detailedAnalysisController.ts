@@ -2,6 +2,7 @@ import { Response, Request } from "express";
 import { Prisma } from "../../lib/prisma/prismaClinet";
 
 
+
 export const getTotalSalesmen = async (req: Request, res: Response) => {
   try {
     const count = await Prisma.salesMan.count();
@@ -36,31 +37,22 @@ export const getOverallAccuracy = async (req: Request, res: Response) => {
         where: { scanDistance: { gt: 100 } },
       });
   
-      const accuracyPercentage: number =
-        totalVisits > 0 ? ((totalVisits - inaccurateVisits) / totalVisits) * 100 : 0;
+      console.log("Total Visits:", totalVisits);
+      console.log("Inaccurate Visits:", inaccurateVisits);
+  
+      if (totalVisits === 0) {
+        return res.json({ accuracyPercentage: "No visits recorded" });
+      }
+  
+      const accuracyPercentage: number = ((totalVisits - inaccurateVisits) / totalVisits) * 100;
   
       res.json({ accuracyPercentage: accuracyPercentage.toFixed(2) });
     } catch (error) {
+      console.error("Error fetching accuracy:", error);
       res.status(500).json({ error: (error as Error).message });
     }
   };
-
-export const getPeakVisitingHour = async (req: Request, res: Response) => {
-    try {
-      const visits = await Prisma.visitedLocation.findMany({ select: { date: true } });
-      const hourCounts: number[] = Array(24).fill(0);
   
-      visits.forEach((visit) => {
-        const hour: number = new Date(visit.date).getHours();
-        hourCounts[hour]++;
-      });
-  
-      res.json({ peakHours: hourCounts });
-    } catch (error) {
-      res.status(500).json({ error: (error as Error).message });
-    }
-  };
-
 export const getMostVisitedLocations = async (req: Request, res: Response) => {
     try {
       const locations = await Prisma.visitedLocation.groupBy({
@@ -94,30 +86,6 @@ export const getMostVisitedLocations = async (req: Request, res: Response) => {
     }
   };
   
-
-export const getAverageVisitDurations = async (req: Request, res: Response) => {
-    try {
-      const visits = await Prisma.visitedLocation.findMany({
-        select: { createdAt: true, updatedAt: true },
-      });
-  
-      let totalDuration: number = 0;
-      let count: number = 0;
-  
-      visits.forEach((visit) => {
-        const duration: number =
-          new Date(visit.updatedAt).getTime() - new Date(visit.createdAt).getTime();
-        totalDuration += duration;
-        count++;
-      });
-  
-      const averageDuration: number = count > 0 ? totalDuration / count / 60000 : 0;
-  
-      res.json({ averageVisitDuration: averageDuration.toFixed(2) });
-    } catch (error) {
-      res.status(500).json({ error: (error as Error).message });
-    }
-  };
 
 export const getRegionWiseSalesmanCount = async (req: Request, res: Response) => {
     try {
@@ -160,125 +128,324 @@ export const gettotalOutletsAssigned = async (req: Request, res: Response) => {
     }
 };
 
-export const gettotalOutletsVisited = async (req: Request, res: Response) => {
-    try {
-      const count = await Prisma.visitedLocation.groupBy({
-        by: ["locationId"],
-        _count: { locationId: true },
-      });
-      res.json({ totalOutletsVisited: count.length });
-      res.json({ totalOutletsVisited: count });
-    } catch (error) {
-      res.status(500).json({ error: (error as Error).message });
-    }
-  };
 
-export async function getLocationAnalytics(req: Request, res: Response) {
-    try {
-      const date = req.query.date ? new Date(req.query.date as string) : new Date();
+export const gettotalOutletsVisited = async (req: Request, res: Response) => {
+  try {
+    console.log("Fetching total unique outlets visited...");
+
+    // Fetch unique location IDs from visitedLocation
+    const uniqueOutlets = await Prisma.visitedLocation.findMany({
+      select: { locationId: true },
+      distinct: ["locationId"],
+    });
+
+    console.log("Unique outlets visited:", uniqueOutlets.length, uniqueOutlets);
+
+    return res.json({ totalOutletsVisitedd: uniqueOutlets.length });
+  } catch (error) {
+    console.error("Error fetching total outlets visited:", error);
+    return res.status(500).json({ error: (error as Error).message });
+  }
+};
+
+
+
+
   
-      // Get start and end of the queried date
-      const startDate = new Date(date.setHours(0, 0, 0, 0));
-      const endDate = new Date(date.setHours(23, 59, 59, 999));
+  interface LocationAnalytics {
+    storeType: string;
+    region: string;
+    state: string;
+    salesmanType: string;
+    inTime: number | null;
+    outTime: number | null;
+    outletsVisited: number;
+    outletsAssigned: number;
+    accuracyPercentage: number;
+    locationName: string;
+    marketName: string;
+    salesmanName: string;
+  }
   
-      // Fetch all managed locations (not just distributors)
-      const locations = await Prisma.managedLocation.findMany({
-        include: {
-          VisitedLocation: {
-            where: {
-              date: {
-                gte: startDate,
-                lte: endDate,
-              },
-            },
-            include: {
-              SalesMan: true,
-            },
-            orderBy: {
-              date: "asc",
-            },
-          },
-          AssignSalesman: {
-            include: {
-              SalesMan: true,
-            },
-          },
-        },
-      });
-  
-      const analytics = locations.map((location) => {
-        const visits = location.VisitedLocation;
-        const assignments = location.AssignSalesman;
-  
-        // If no visits, return default values
-        if (visits.length === 0) {
-          return {
-            storeType: location.storeType,
-            region: location.region || "N/A",
-            state: location.state || "N/A",
-            salesmanType: assignments.length > 0 ? assignments[0].SalesMan.salesManType : "N/A",
-            inTime: null,
-            outTime: null,
-            outletsVisited: 0,
-            outletsAssigned: assignments.length,
-            accuracyPercentage: 0,
-            locationName: location.name,
-            marketName: location.market_name,
-            salesmanName: assignments.length > 0 ? assignments[0].SalesMan.name : "N/A",
-          };
-        }
-  
-        // In-Time (earliest visit)
-        const inTime = visits[0].date;
-  
-        // Out-Time (latest visit)
-        const outTime = visits.length > 1 ? visits[visits.length - 1].date : null;
-  
-        // Number of outlets visited
-        const outletsVisited = visits.length;
-  
-        // Number of outlets assigned
-        const outletsAssigned = assignments.length;
-  
-        // Accuracy Calculation (Over 100m non-accurate)
-        const accurateVisits = visits.filter((visit) => visit.scanDistance <= 100).length;
-        const accuracyPercentage = (accurateVisits / visits.length) * 100;
-  
-        return {
-          storeType: location.storeType, // Added store type field
-          region: location.region || "N/A",
-          state: location.state || "N/A",
-          salesmanType: visits[0]?.SalesMan?.salesManType || "N/A",
-          inTime: Math.round(inTime.getHours() * 60 + inTime.getMinutes()),
-          outTime: outTime ? Math.round(outTime.getHours() * 60 + outTime.getMinutes()) : null,
-          outletsVisited,
-          outletsAssigned,
-          accuracyPercentage: Math.round(accuracyPercentage * 100) / 100,
-          locationName: location.name,
-          marketName: location.market_name,
-          salesmanName: visits[0]?.SalesMan?.name || "N/A",
-        };
-      });
-  
-      res.json({
-        success: true,
-        data: analytics,
-        debug: {
-          dateQueried: date,
-          totalLocations: locations.length,
-          locationsWithVisits: analytics.filter((a) => a.outletsVisited > 0).length,
-        },
-      });
-  
-    } catch (error) {
-      console.error("Error fetching location analytics:", error);
-      res.status(500).json({
+
+
+interface AnalyticsResponse {
+  state: string;
+  storeType: string;
+  salesmanName: string;
+  salesmanType: string;
+  inTime: string | null;
+  outTime: string | null;
+  outletsVisited: number;
+  outletsAssigned: number;
+  accuracyPercentage: number;
+}
+
+export const getLocationAnalytics = async (req: Request, res: Response) => {
+  try {
+    console.log("Fetching updated location analytics...");
+
+    // Get visited locations with related data
+    const visitedLocations = await Prisma.visitedLocation.findMany({
+      include: {
+        Location: true,
+        SalesMan: true,
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+    console.log(`Total locations visited: ${visitedLocations.length}`);
+
+    // Get assigned locations count for each salesman
+    const assignedLocations = await Prisma.assignSalesman.groupBy({
+      by: ["salesManId"],
+      _count: {
+        locationId: true,
+      },
+    });
+
+    // Create a map for quick lookup of assigned locations count
+    const assignedLocationsMap = new Map(
+      assignedLocations.map((item) => [item.salesManId, item._count.locationId])
+    );
+
+    console.log(`Total unique salesmen with assigned locations: ${assignedLocations.length}`);
+
+    // Group visits by salesman
+    const visitsBySalesman = visitedLocations.reduce((acc, visit) => {
+      if (!acc[visit.salesManId]) {
+        acc[visit.salesManId] = [];
+      }
+      acc[visit.salesManId].push(visit);
+      return acc;
+    }, {} as Record<string, typeof visitedLocations>);
+
+    console.log(`Total unique salesmen with visits: ${Object.keys(visitsBySalesman).length}`);
+
+    // Transform the data into the required format
+    const analytics: AnalyticsResponse[] = Object.entries(visitsBySalesman).map(([salesmanId, visits]) => {
+      // Sort visits by creation time to determine in/out times
+      const sortedVisits = visits.sort((a, b) =>
+        a.createdAt.getTime() - b.createdAt.getTime()
+      );
+
+      const firstVisit = sortedVisits[0];
+      const lastVisit = sortedVisits.length > 1 ? sortedVisits[sortedVisits.length - 1] : null;
+
+      // Calculate accuracy percentage
+      const accurateVisits = visits.filter(visit => visit.scanDistance < 100).length;
+      const accuracyPercentage = (accurateVisits / visits.length) * 100;
+
+      // Get unique locations visited by this salesman
+      const uniqueLocationsVisited = new Set(visits.map(v => v.locationId)).size;
+
+      // Get assigned locations count for this salesman
+      const outletsAssigned = assignedLocationsMap.get(parseInt(salesmanId)) || 0;
+
+      // Log cases where a salesman has visits but no assigned locations
+      if (outletsAssigned === 0 && uniqueLocationsVisited > 0) {
+        console.warn(
+          `Warning: Salesman ${salesmanId} visited ${uniqueLocationsVisited} locations but has no assigned outlets.`
+        );
+      }
+
+      if (firstVisit.Location.storeType !== "DISTRIBUTOR") {
+        console.warn(
+          `Salesman ${salesmanId} (${firstVisit.SalesMan.name}) visited a non-distributor location (${firstVisit.Location.storeType}).`
+        );
+      }
+
+
+      return {
+        state: firstVisit.Location.state,
+        storeType: firstVisit.Location.storeType,
+        salesmanName: firstVisit.SalesMan.name,
+        salesmanType: firstVisit.SalesMan.salesManType,
+        inTime: firstVisit.Location.storeType === "DISTRIBUTOR" ? firstVisit.createdAt.toISOString() : null,
+        outTime: firstVisit.Location.storeType === "DISTRIBUTOR" && lastVisit 
+          ? lastVisit.createdAt.toISOString() 
+          : null,
+        outletsVisited: uniqueLocationsVisited,
+        outletsAssigned,
+        accuracyPercentage: Math.round(accuracyPercentage),
+      };
+    });
+
+    console.log(`Total updated analytics records generated: ${analytics.length}`);
+
+    return res.status(200).json({
+      success: true,
+      data: analytics,
+    });
+
+  } catch (error) {
+    console.error("Error fetching updated location analytics:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error",
+    });
+  }
+};
+
+
+// Optional: Add date range filter
+
+// Ensure this import exists
+
+
+// export const getLocationAnalytics = async (req: Request, res: Response) => {
+//   try {
+//     console.log("Fetching location analytics for distributors...");
+
+//     // Get visited locations with related data, filtering for distributors
+//     const visitedLocations = await Prisma.visitedLocation.findMany({
+//       include: {
+//         Location: true,
+//         SalesMan: true,
+//       },
+//       where: {
+//         Location: {
+//           storeType: 'DISTRIBUTOR'
+//         }
+//       },
+//       orderBy: {
+//         createdAt: "asc",
+//       },
+//     });
+//     console.log(`Total distributor locations visited: ${visitedLocations.length}`);
+
+//     // Get assigned distributor locations count for each salesman
+//     const assignedLocations = await Prisma.assignSalesman.groupBy({
+//       by: ["salesManId"],
+//       where: {
+//         Location: {
+//           storeType: 'DISTRIBUTOR'
+//         }
+//       },
+//       _count: {
+//         locationId: true,
+//       },
+//     });
+
+//     // Create a map for quick lookup of assigned locations count
+//     const assignedLocationsMap = new Map(
+//       assignedLocations.map((item) => [item.salesManId, item._count.locationId])
+//     );
+
+//     console.log(`Total unique salesmen with assigned distributor locations: ${assignedLocations.length}`);
+
+//     // Group visits by salesman
+//     const visitsBySalesman = visitedLocations.reduce((acc, visit) => {
+//       if (!acc[visit.salesManId]) {
+//         acc[visit.salesManId] = [];
+//       }
+//       acc[visit.salesManId].push(visit);
+//       return acc;
+//     }, {} as Record<string, typeof visitedLocations>);
+
+//     console.log(`Total unique salesmen with distributor visits: ${Object.keys(visitsBySalesman).length}`);
+
+//     // Transform the data into the required format
+//     const analytics: AnalyticsResponse[] = Object.entries(visitsBySalesman).map(([salesmanId, visits]) => {
+//       // Sort visits by creation time to determine in/out times
+//       const sortedVisits = visits.sort((a, b) =>
+//         a.createdAt.getTime() - b.createdAt.getTime()
+//       );
+
+//       const firstVisit = sortedVisits[0];
+//       const lastVisit = sortedVisits.length > 1 ? sortedVisits[sortedVisits.length - 1] : null;
+
+//       // Calculate accuracy percentage
+//       const accurateVisits = visits.filter(visit => visit.scanDistance < 100).length;
+//       const accuracyPercentage = (accurateVisits / visits.length) * 100;
+
+//       // Get unique distributor locations visited by this salesman
+//       const uniqueLocationsVisited = new Set(visits.map(v => v.locationId)).size;
+
+//       // Get assigned distributor locations count for this salesman
+//       const outletsAssigned = assignedLocationsMap.get(parseInt(salesmanId)) || 0;
+
+//       // Log cases where a salesman has distributor visits but no assigned locations
+//       if (outletsAssigned === 0 && uniqueLocationsVisited > 0) {
+//         console.warn(
+//           `Warning: Salesman ${salesmanId} visited ${uniqueLocationsVisited} distributor locations but has no assigned outlets.`
+//         );
+//       }
+
+//       return {
+//         state: firstVisit.Location.state,
+//         storeType: firstVisit.Location.storeType,
+//         salesmanName: firstVisit.SalesMan.name,
+//         salesmanType: firstVisit.SalesMan.salesManType,
+//         inTime: firstVisit.createdAt.toISOString(),
+//         outTime: lastVisit ? lastVisit.createdAt.toISOString() : null,
+//         outletsVisited: uniqueLocationsVisited,
+//         outletsAssigned,
+//         accuracyPercentage: Math.round(accuracyPercentage),
+//       };
+//     });
+
+//     console.log(`Total distributor analytics records generated: ${analytics.length}`);
+
+//     return res.status(200).json({
+//       success: true,
+//       data: analytics,
+//     });
+
+//   } catch (error) {
+//     console.error("Error fetching distributor location analytics:", error);
+//     return res.status(500).json({
+//       success: false,
+//       error: "Internal server error",
+//     });
+//   }
+// };
+
+export const getLocationAnalyticsByDateRange = async (req: Request, res: Response) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    if (!startDate || !endDate) {
+      return res.status(400).json({
         success: false,
-        error: "Failed to fetch location analytics",
-        details: error instanceof Error ? error.message : "Unknown error",
+        error: 'Start date and end date are required',
       });
     }
+
+    const visitedLocations = await Prisma.visitedLocation.findMany({
+      where: {
+        createdAt: {
+          gte: new Date(startDate as string),
+          lte: new Date(endDate as string),
+        },
+      },
+      include: {
+        Location: true,
+        SalesMan: true,
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+
+    // Rest of the logic remains the same as getLocationAnalytics
+    // You can extract the transformation logic into a separate function
+    // to avoid code duplication
+
+    // ... (same transformation logic as above)
+
+  } catch (error) {
+    console.error('Error fetching location analytics by date range:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+    });
   }
+};
+
+  
 
 export const getMostVisitedLocation = async (req: Request, res: Response) => {
     try {

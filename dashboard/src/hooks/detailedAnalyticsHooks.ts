@@ -10,8 +10,6 @@ import {
   getAverageVisitDurations,
   getRegionWiseSalesmen,
   getStateWiseVisitDistribution,
-  gettotalOutletsAssigned,
-  gettotalOutletsVisited,
   getLocationAnalytics,
 } from "../api/apiFunctions";
 import {
@@ -25,8 +23,6 @@ import {
   AverageVisitDurationsResponse,
   RegionWiseSalesmanCountResponse,
   StateWiseVisitDistributionResponse,
-  TotalOutletsAssignedResponse,
-  TotalOutletsVisitedResponse,
   LocationAnalyticsResponse,
 } from "../types/detailedResponseType";
 
@@ -130,25 +126,7 @@ const useStateWiseVisitDistribution = () => {
   });
 };
 
-const useTotalOutletsAssigned = () => {
-  return useQuery<TotalOutletsAssignedResponse>({
-    queryKey: ["totalOutletsAssigned"],
-    queryFn: async () => {
-      const response = await gettotalOutletsAssigned();
-      return response.data;
-    },
-  });
-};
 
-const useTotalOutletsVisited = () => {
-  return useQuery<TotalOutletsVisitedResponse>({
-    queryKey: ["totalOutletsVisited"],
-    queryFn: async () => {
-      const response = await gettotalOutletsVisited();
-      return response.data;
-    },
-  });
-};
 
 const useLocationAnalytics = (date?: string) => {
   return useQuery<LocationAnalyticsResponse>({
@@ -171,7 +149,5 @@ export {
   useAverageVisitDurations,
   useRegionWiseSalesmanCount,
   useStateWiseVisitDistribution,
-  useTotalOutletsAssigned,
-  useTotalOutletsVisited,
   useLocationAnalytics,
 };

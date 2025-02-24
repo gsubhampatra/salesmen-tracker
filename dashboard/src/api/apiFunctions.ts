@@ -68,13 +68,6 @@ export const getTotalDistributors = async () => {
   return await api.get(API_PATHS.DASHBOARD.DISTRIBUTOR.GET_TOTAL_DISTRIBUTORS);
 }
 
-export const getTotalOutletsAssigned = async () => {
-  return await api.get(API_PATHS.DASHBOARD.DISTRIBUTOR.GET_TOTAL_OUTLETS_ASSIGNED);
-}
-
-export const getTotalOutletsVisited = async () => {
-  return await api.get(API_PATHS.DASHBOARD.DISTRIBUTOR.GET_TOTAL_OUTLETS_VISITED);
-}
 
 export const getOverallAccuracy = async () => {
   return await api.get(API_PATHS.DASHBOARD.DISTRIBUTOR.GET_OVERALL_ACCURACY);

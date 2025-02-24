@@ -39,8 +39,8 @@ import {
   getAllSalesmen,
   getAllStores,
   getDistributorAnalytics,
-  getTotalOutletsAssigned,
-  getTotalOutletsVisited,
+  gettotalOutletsAssigned,
+  gettotalOutletsVisited,
   getOverallAccuracy,
   getAverageVisitDuration,
   getMaxDistanceTraveled,
@@ -181,7 +181,7 @@ const useTotalOutletsAssigned = () => {
   return useQuery<TotalOutletsAssignedResponse>({
     queryKey: ["totalOutletsAssigned"],
     queryFn: async () => {
-      const response = await getTotalOutletsAssigned();
+      const response = await gettotalOutletsAssigned();
       return response.data;
     },
   });
@@ -191,7 +191,7 @@ const useTotalOutletsVisited = () => {
   return useQuery<TotalOutletsVisitedResponse>({
     queryKey: ["totalOutletsVisited"],
     queryFn: async () => {
-      const response = await getTotalOutletsVisited();
+      const response = await gettotalOutletsVisited();
       return response.data;
     },
   });

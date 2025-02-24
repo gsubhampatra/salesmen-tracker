@@ -36,9 +36,7 @@ const Sidebar = ({
     { title: "Salesman Summary", path: "/Salesman-Summary", icon: User },
   ];
 
-  const dropdownLinks: SidebarLink[] = [
-    { title: "Distributors", path: "/distributor", icon: Building2 },
-  ];
+  
 
   const isActivePath = (path: string) => location.pathname === path;
 
@@ -65,7 +63,7 @@ const Sidebar = ({
       <aside
         className={`
           fixed top-0 left-0 h-screen bg-white border-r border-gray-200
-          transition-all duration-300 ease-in-out z-50
+          transition-all duration-300 ease-in-out z-50 
           ${isExpanded ? "w-64" : "w-20"}
           ${isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
         `}
@@ -137,47 +135,7 @@ const Sidebar = ({
           })}
 
           {/* Section-Wise Reports Dropdown - Hidden when Sidebar is Collapsed */}
-          {isExpanded && (
-            <div className="mt-3">
-              <button
-                type="button"
-                className="flex items-center justify-between w-full px-3 py-3 text-gray-600 hover:bg-gray-100 rounded-lg"
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              >
-                <span className="font-medium">Section-Wise Reports</span>
-                {isDropdownOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-              </button>
-
-              {/* Dropdown Links */}
-              {isDropdownOpen && (
-                <div className="pl-4 mt-1">
-                  {dropdownLinks.map((link) => {
-                    const Icon = link.icon;
-                    return (
-                      <Link
-                        key={link.path}
-                        to={link.path}
-                        className={`
-                          flex items-center gap-3 px-3 py-3 rounded-lg transition-colors
-                          hover:bg-gray-100 group relative
-                          ${isActivePath(link.path) ? "bg-blue-50 text-blue-600" : "text-gray-600"}
-                        `}
-                        onClick={() => setIsMobileOpen(false)}
-                      >
-                        <div className="flex items-center justify-center w-6">
-                          <Icon
-                            size={22}
-                            className={isActivePath(link.path) ? "text-blue-600" : "text-gray-600"}
-                          />
-                        </div>
-                        <span className="font-medium whitespace-nowrap">{link.title}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          )}
+         
         </nav>
       </aside>
     </>

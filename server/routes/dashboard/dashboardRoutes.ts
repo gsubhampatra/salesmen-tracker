@@ -15,10 +15,40 @@ import {
   getAllSalesmens,
   getDistributorSalesmenDetails,
 } from "../../controller/dashboard/dashboardController";
-import { getAccuracyOverTime, getAverageVisitDuration, getAverageVisitDurationOverTime, getDistributorAnalytics, getDistributors, getDistributorsWithNoVisits, getMaxDistanceTraveled, getMostActiveSalesman, getOverallAccuracyPercentage, getPeakVisitingHours, getSalesmanAccuracy, getSalesmanProductivity, getTotalDistributors, getTotalOutletsAssigned, getTotalOutletsVisited, getUniqueSalesmen, getVisitsPerDistributor } from "../../controller/dashboard/distributorController";
-import { getOverallAccuracy, getTotalLocationsManaged, getTotalSalesmen, getTotalVisitsMade , getMostVisitedLocations, getRegionWiseSalesmanCount, getStateWiseVisitDistribution, gettotalOutletsAssigned, getLocationAnalytics, getMostVisitedLocation, gettotalOutletsVisited} from "../../controller/dashboard/detailedAnalysisController";
-import { getLocationAnalytic} from "../../controller/dashboard/summeryController";
-
+import {
+  getAccuracyOverTime,
+  getAverageVisitDuration,
+  getAverageVisitDurationOverTime,
+  getDistributorAnalytics,
+  getDistributors,
+  getDistributorsWithNoVisits,
+  getMaxDistanceTraveled,
+  getMostActiveSalesman,
+  getOverallAccuracyPercentage,
+  getPeakVisitingHours,
+  getSalesmanAccuracy,
+  getSalesmanProductivity,
+  getTotalDistributors,
+  getTotalOutletsAssigned,
+  getTotalOutletsVisited,
+  getUniqueSalesmen,
+  getVisitsPerDistributor,
+} from "../../controller/dashboard/distributorController";
+import {
+  getOverallAccuracy,
+  getTotalLocationsManaged,
+  getTotalSalesmen,
+  getTotalVisitsMade,
+  getMostVisitedLocations,
+  getRegionWiseSalesmanCount,
+  getStateWiseVisitDistribution,
+  gettotalOutletsAssigned,
+  getLocationAnalytics,
+  getMostVisitedLocation,
+  gettotalOutletsVisited,
+  getLocationAnalyticsByDateRange,
+} from "../../controller/dashboard/detailedAnalysisController";
+import { getSalesmanVisits } from "../../controller/dashboard/summeryController";
 
 const router = Router();
 
@@ -48,10 +78,9 @@ router.get("/getallsalesmansReport", getAllSalesmens);
 router.get("/getdistributorReport", getDistributorSalesmenDetails);
 
 // Distributor Routes
-router.get("/getDistributors", getDistributors)
-router.get("/getDistributorAnalytics", getDistributorAnalytics)
-router.get("/gettotaldistributors", getTotalDistributors)
-
+router.get("/getDistributors", getDistributors);
+router.get("/getDistributorAnalytics", getDistributorAnalytics);
+router.get("/gettotaldistributors", getTotalDistributors);
 
 router.get("/getOverallAccuracy", getOverallAccuracyPercentage);
 router.get("/getAverageVisitDuration", getAverageVisitDuration);
@@ -76,9 +105,11 @@ router.get("/getRegionWiseSalesmen", getRegionWiseSalesmanCount);
 router.get("/getStateWiseVisitDistribution", getStateWiseVisitDistribution);
 router.get("/getTotalOutletsAssigned", gettotalOutletsAssigned);
 router.get("/getTotalOutletsVisited", gettotalOutletsVisited);
-router.get("/getLocationAnalytics", getLocationAnalytics);
 router.get("/getMostVisitedLocation", getMostVisitedLocation);
 
-router.get("/getSalesmanSummary", getLocationAnalytic);
+router.get("/getLocationAnalytics", getLocationAnalytics);
+router.get("/getSalesmanSummary", getSalesmanVisits);
+
+router.get("/getLocationAnalyticsByDateRange", getLocationAnalyticsByDateRange);
 
 export default router;

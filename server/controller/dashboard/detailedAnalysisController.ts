@@ -149,26 +149,6 @@ export const gettotalOutletsVisited = async (req: Request, res: Response) => {
 };
 
 
-
-
-  
-  interface LocationAnalytics {
-    storeType: string;
-    region: string;
-    state: string;
-    salesmanType: string;
-    inTime: number | null;
-    outTime: number | null;
-    outletsVisited: number;
-    outletsAssigned: number;
-    accuracyPercentage: number;
-    locationName: string;
-    marketName: string;
-    salesmanName: string;
-  }
-  
-
-
 interface AnalyticsResponse {
   state: string;
   storeType: string;
@@ -290,161 +270,119 @@ export const getLocationAnalytics = async (req: Request, res: Response) => {
 };
 
 
-// Optional: Add date range filter
-
-// Ensure this import exists
-
-
-// export const getLocationAnalytics = async (req: Request, res: Response) => {
-//   try {
-//     console.log("Fetching location analytics for distributors...");
-
-//     // Get visited locations with related data, filtering for distributors
-//     const visitedLocations = await Prisma.visitedLocation.findMany({
-//       include: {
-//         Location: true,
-//         SalesMan: true,
-//       },
-//       where: {
-//         Location: {
-//           storeType: 'DISTRIBUTOR'
-//         }
-//       },
-//       orderBy: {
-//         createdAt: "asc",
-//       },
-//     });
-//     console.log(`Total distributor locations visited: ${visitedLocations.length}`);
-
-//     // Get assigned distributor locations count for each salesman
-//     const assignedLocations = await Prisma.assignSalesman.groupBy({
-//       by: ["salesManId"],
-//       where: {
-//         Location: {
-//           storeType: 'DISTRIBUTOR'
-//         }
-//       },
-//       _count: {
-//         locationId: true,
-//       },
-//     });
-
-//     // Create a map for quick lookup of assigned locations count
-//     const assignedLocationsMap = new Map(
-//       assignedLocations.map((item) => [item.salesManId, item._count.locationId])
-//     );
-
-//     console.log(`Total unique salesmen with assigned distributor locations: ${assignedLocations.length}`);
-
-//     // Group visits by salesman
-//     const visitsBySalesman = visitedLocations.reduce((acc, visit) => {
-//       if (!acc[visit.salesManId]) {
-//         acc[visit.salesManId] = [];
-//       }
-//       acc[visit.salesManId].push(visit);
-//       return acc;
-//     }, {} as Record<string, typeof visitedLocations>);
-
-//     console.log(`Total unique salesmen with distributor visits: ${Object.keys(visitsBySalesman).length}`);
-
-//     // Transform the data into the required format
-//     const analytics: AnalyticsResponse[] = Object.entries(visitsBySalesman).map(([salesmanId, visits]) => {
-//       // Sort visits by creation time to determine in/out times
-//       const sortedVisits = visits.sort((a, b) =>
-//         a.createdAt.getTime() - b.createdAt.getTime()
-//       );
-
-//       const firstVisit = sortedVisits[0];
-//       const lastVisit = sortedVisits.length > 1 ? sortedVisits[sortedVisits.length - 1] : null;
-
-//       // Calculate accuracy percentage
-//       const accurateVisits = visits.filter(visit => visit.scanDistance < 100).length;
-//       const accuracyPercentage = (accurateVisits / visits.length) * 100;
-
-//       // Get unique distributor locations visited by this salesman
-//       const uniqueLocationsVisited = new Set(visits.map(v => v.locationId)).size;
-
-//       // Get assigned distributor locations count for this salesman
-//       const outletsAssigned = assignedLocationsMap.get(parseInt(salesmanId)) || 0;
-
-//       // Log cases where a salesman has distributor visits but no assigned locations
-//       if (outletsAssigned === 0 && uniqueLocationsVisited > 0) {
-//         console.warn(
-//           `Warning: Salesman ${salesmanId} visited ${uniqueLocationsVisited} distributor locations but has no assigned outlets.`
-//         );
-//       }
-
-//       return {
-//         state: firstVisit.Location.state,
-//         storeType: firstVisit.Location.storeType,
-//         salesmanName: firstVisit.SalesMan.name,
-//         salesmanType: firstVisit.SalesMan.salesManType,
-//         inTime: firstVisit.createdAt.toISOString(),
-//         outTime: lastVisit ? lastVisit.createdAt.toISOString() : null,
-//         outletsVisited: uniqueLocationsVisited,
-//         outletsAssigned,
-//         accuracyPercentage: Math.round(accuracyPercentage),
-//       };
-//     });
-
-//     console.log(`Total distributor analytics records generated: ${analytics.length}`);
-
-//     return res.status(200).json({
-//       success: true,
-//       data: analytics,
-//     });
-
-//   } catch (error) {
-//     console.error("Error fetching distributor location analytics:", error);
-//     return res.status(500).json({
-//       success: false,
-//       error: "Internal server error",
-//     });
-//   }
-// };
 
 export const getLocationAnalyticsByDateRange = async (req: Request, res: Response) => {
   try {
-    const { startDate, endDate } = req.query;
+    console.log("Fetching updated location analytics...");
 
-    if (!startDate || !endDate) {
-      return res.status(400).json({
-        success: false,
-        error: 'Start date and end date are required',
-      });
+    const { startDate, endDate, page = 1, limit = 10 } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
+
+    let dateFilter: any = {};
+    if (startDate) {
+      dateFilter.date = {
+        gte: new Date(startDate as string),
+      };
+      if (endDate) {
+        dateFilter.date.lte = new Date(endDate as string);
+      }
     }
 
+    // Get visited locations with related data
     const visitedLocations = await Prisma.visitedLocation.findMany({
-      where: {
-        createdAt: {
-          gte: new Date(startDate as string),
-          lte: new Date(endDate as string),
-        },
-      },
+      where: dateFilter,
       include: {
         Location: true,
         SalesMan: true,
       },
       orderBy: {
-        createdAt: 'asc',
+        createdAt: "asc",
+      },
+      skip,
+      take: Number(limit),
+    });
+
+    console.log(`Total locations visited: ${visitedLocations.length}`);
+
+    // Get assigned locations count for each salesman
+    const assignedLocations = await Prisma.assignSalesman.groupBy({
+      by: ["salesManId"],
+      _count: {
+        locationId: true,
       },
     });
 
-    // Rest of the logic remains the same as getLocationAnalytics
-    // You can extract the transformation logic into a separate function
-    // to avoid code duplication
+    // Create a map for quick lookup of assigned locations count
+    const assignedLocationsMap = new Map(
+      assignedLocations.map((item) => [item.salesManId, item._count.locationId])
+    );
 
-    // ... (same transformation logic as above)
+    console.log(`Total unique salesmen with assigned locations: ${assignedLocations.length}`);
+
+    // Group visits by salesman
+    const visitsBySalesman = visitedLocations.reduce((acc, visit) => {
+      if (!acc[visit.salesManId]) {
+        acc[visit.salesManId] = [];
+      }
+      acc[visit.salesManId].push(visit);
+      return acc;
+    }, {} as Record<string, typeof visitedLocations>);
+
+    console.log(`Total unique salesmen with visits: ${Object.keys(visitsBySalesman).length}`);
+
+    // Transform the data into the required format
+    const analytics = Object.entries(visitsBySalesman).map(([salesmanId, visits]) => {
+      // Sort visits by creation time to determine in/out times
+      const sortedVisits = visits.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+
+      const firstVisit = sortedVisits[0];
+      const lastVisit = sortedVisits.length > 1 ? sortedVisits[sortedVisits.length - 1] : null;
+
+      // Calculate accuracy percentage
+      const accurateVisits = visits.filter(visit => visit.scanDistance < 100).length;
+      const accuracyPercentage = (accurateVisits / visits.length) * 100;
+
+      // Get unique locations visited by this salesman
+      const uniqueLocationsVisited = new Set(visits.map(v => v.locationId)).size;
+
+      // Get assigned locations count for this salesman
+      const outletsAssigned = assignedLocationsMap.get(parseInt(salesmanId)) || 0;
+
+      return {
+        state: firstVisit.Location.state,
+        storeType: firstVisit.Location.storeType,
+        salesmanName: firstVisit.SalesMan.name,
+        salesmanType: firstVisit.SalesMan.salesManType,
+        inTime: firstVisit.Location.storeType === "DISTRIBUTOR" ? firstVisit.createdAt.toISOString() : null,
+        outTime: firstVisit.Location.storeType === "DISTRIBUTOR" && lastVisit 
+          ? lastVisit.createdAt.toISOString() 
+          : null,
+        outletsVisited: uniqueLocationsVisited,
+        outletsAssigned,
+        accuracyPercentage: Math.round(accuracyPercentage),
+      };
+    });
+
+    console.log(`Total updated analytics records generated: ${analytics.length}`);
+
+    return res.status(200).json({
+      success: true,
+      data: analytics,
+      pagination: {
+        page: Number(page),
+        limit: Number(limit),
+        hasNextPage: visitedLocations.length === Number(limit),
+      },
+    });
 
   } catch (error) {
-    console.error('Error fetching location analytics by date range:', error);
+    console.error("Error fetching updated location analytics:", error);
     return res.status(500).json({
       success: false,
-      error: 'Internal server error',
+      error: "Internal server error",
     });
   }
 };
-
   
 
 export const getMostVisitedLocation = async (req: Request, res: Response) => {

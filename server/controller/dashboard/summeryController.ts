@@ -19,14 +19,6 @@ export const getSalesmanVisits = async (req: Request, res: Response) => {
     };
   }
 
-  if (storeType) {
-    where.Location = { storeType: storeType as string };
-  }
-
-  if (salesmanType) {
-    where.SalesMan = { salesManType: salesmanType as string };
-  }
-
   try {
     const visits = await Prisma.assignSalesman.findMany({
       where,

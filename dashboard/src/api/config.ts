@@ -64,6 +64,9 @@ export const API_PATHS = {
       GET_LOCATION_ANALYTICS: "/getLocationAnalytics",
     },
 
+    GET_DETAILED_ANALYTICS_BY_DATE_RANGE: "/getLocationAnalyticsByDateRange",
+
+
     SALESMAN_SUMMARY: {
       ROOT: "/",
       GET_SALESMAN_SUMMARY: "/getSalesmanSummary",

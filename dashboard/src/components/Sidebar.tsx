@@ -27,7 +27,7 @@ const Sidebar = ({
   const location = useLocation();
 
   const links: SidebarLink[] = [
-    { title: "Dashboard", path: "/home", icon: LayoutDashboard },
+    { title: "Dashboard", path: "/", icon: LayoutDashboard },
     { title: "Detailed Analysis", path: "/detailed-analysis", icon: BarChart3 },
     { title: "Salesman Summary", path: "/Salesman-Summary", icon: User },
   ];
@@ -117,7 +117,7 @@ const Sidebar = ({
                 </span>
                 {!isExpanded && (
                   <div
-                    className="absolute px-2 py-1 ml-2 text-sm text-white transition-opacity bg-gray-800 rounded-md opacity-0 pointer-events-none  left-full whitespace-nowrap group-hover:opacity-100"
+                    className="absolute px-2 py-1 ml-2 text-sm text-white transition-opacity bg-gray-800 rounded-md opacity-0 pointer-events-none left-full whitespace-nowrap group-hover:opacity-100"
                   >
                     {link.title}
                   </div>

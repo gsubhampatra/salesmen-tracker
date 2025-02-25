@@ -101,3 +101,33 @@ export const getSalesmanVisitsByDate = async (req: Request, res: Response) => {
   }
 };
 
+export const getAccuracyPercentage = async (req: Request, res: Response) => {
+  try { 
+    const totalVisits = await Prisma.visitedLocation.count();
+    const inaccurateVisits = await Prisma.visitedLocation.count({
+      where: { scanDistance: { gt: 100 } },
+    });
+    const accuracyPercentage = (totalVisits - inaccurateVisits) / totalVisits;
+    return res.status(200).json({ accuracyPercentage });
+  } catch (error) {
+    console.error("Error fetching accuracy:", error);
+    res.status(500).json({ error: (error as Error).message });
+  }
+};
+
+export const getAvgDailyVisits = async (req: Request, res: Response) => {
+  try {
+    const visits = await Prisma.visitedLocation.findMany();
+
+    const totalDays = Math.ceil(
+      (new Date().getTime() - visits[0]?.createdAt.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    const avgDailyVisits = visits.length / totalDays;
+    return res.status(200).json({ avgDailyVisits });
+  } catch (error) {
+    console.error("Error fetching daily avg visits:", error);
+    res.status(500).json({ error: (error as Error).message });
+  }
+};
+

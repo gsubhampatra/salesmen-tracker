@@ -297,18 +297,27 @@ export const getLocationAnalyticsByDateRange = async (
   try {
     console.log("Fetching updated location analytics...");
 
-    const { startDate, endDate, page = 1, limit = 10 } = req.query;
-    const skip = (Number(page) - 1) * Number(limit);
+    const { startDate, endDate } = req.query;
 
     let dateFilter: any = {};
     if (startDate) {
+      // Set start date to beginning of day (00:00:00)
+      const start = new Date(startDate as string);
+      start.setHours(0, 0, 0, 0);
+      
       dateFilter.date = {
-        gte: new Date(startDate as string),
+        gte: start,
       };
+      
       if (endDate) {
-        dateFilter.date.lte = new Date(endDate as string);
+        // Set end date to end of day (23:59:59.999)
+        const end = new Date(endDate as string);
+        end.setHours(23, 59, 59, 999);
+        
+        dateFilter.date.lte = end;
       }
     }
+
 
     // Get visited locations with related data
     const visitedLocations = await Prisma.visitedLocation.findMany({
@@ -320,8 +329,7 @@ export const getLocationAnalyticsByDateRange = async (
       orderBy: {
         createdAt: "asc",
       },
-      skip,
-      take: Number(limit),
+     
     });
 
     console.log(`Total locations visited: ${visitedLocations.length}`);
@@ -425,11 +433,6 @@ export const getLocationAnalyticsByDateRange = async (
     return res.status(200).json({
       success: true,
       data: analytics,
-      pagination: {
-        page: Number(page),
-        limit: Number(limit),
-        hasNextPage: visitedLocations.length === Number(limit),
-      },
     });
   } catch (error) {
     console.error("Error fetching updated location analytics:", error);

@@ -230,7 +230,7 @@ export const getOverallAccuracyPercentage = async (
   
       const accuracyPercentage =
         totalVisits > 0 ? (accurateVisits / totalVisits) * 100 : 0;
-  
+      
       res.json({ success: true, overallAccuracy: accuracyPercentage.toFixed(2) });
     } catch (error) {
       res.status(500).json({ success: false, error: "Failed to fetch data" });

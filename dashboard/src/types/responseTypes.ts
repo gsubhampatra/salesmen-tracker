@@ -131,7 +131,7 @@ export interface TotalOutletsVisitedResponse {
 
 export interface OverallAccuracyPercentageResponse {
   success: boolean;
-  overallAccuracy: string; // percentage as string with 2 decimal places
+  accuracyPercentage: string; // percentage as string with 2 decimal places
 }
 
 export interface AverageVisitDurationResponse {

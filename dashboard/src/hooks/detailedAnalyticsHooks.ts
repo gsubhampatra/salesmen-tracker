@@ -3,7 +3,6 @@ import {
   getTotalSalesmen,
   getTotalLocationsManaged,
   getTotalVisitsMade,
-  getOverallAccuracy,
   getPeakVisitingHour,
   getMostVisitedLocations,
   getMostVisitedLocation,
@@ -16,7 +15,6 @@ import {
   TotalSalesmenResponse,
   TotalLocationsManagedResponse,
   TotalVisitsMadeResponse,
-  OverallAccuracyResponse,
   PeakVisitingHourResponse,
   MostVisitedLocationsResponse,
   MostVisitedLocationResponse,
@@ -56,15 +54,7 @@ const useTotalVisitsMade = () => {
   });
 };
 
-const useOverallAccuracy = () => {
-  return useQuery<OverallAccuracyResponse>({
-    queryKey: ["overallAccuracy"],
-    queryFn: async () => {
-      const response = await getOverallAccuracy();
-      return response.data;
-    },
-  });
-};
+
 
 const usePeakVisitingHour = () => {
   return useQuery<PeakVisitingHourResponse>({
@@ -142,7 +132,6 @@ export {
   useTotalSalesmen,
   useTotalLocationsManaged,
   useTotalVisitsMade,
-  useOverallAccuracy,
   usePeakVisitingHour,
   useMostVisitedLocations,
   useMostVisitedLocation,

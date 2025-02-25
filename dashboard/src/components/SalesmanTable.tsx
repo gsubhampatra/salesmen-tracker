@@ -13,10 +13,10 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  ArrowLeft,
-  ArrowRight,
+  Loader2,
 } from "lucide-react";
 import { api, API_PATHS } from "../api/config";
+
 type filters = {
   startDate: string;
   endDate: string;
@@ -38,67 +38,82 @@ type DataRow = {
   intime: string;
   visited: string;
   scanDistance: number;
+  date: string;
 };
 
-const fetchSalesmanVisits = async (filters : filters) => {
+const fetchSalesmanVisits = async () => {
   const response = await api.get(
-    API_PATHS.DASHBOARD.SALESMAN_SUMMARY.GET_SALESMAN_SUMMARY,
-    { params: { startDate: filters.startDate, endDate: filters.endDate, page: filters.page, limit: filters.limit } }
+    API_PATHS.DASHBOARD.SALESMAN_SUMMARY.GET_SALESMAN_SUMMARY
   );
   return response.data;
 };
 
 const SalesmanTable = () => {
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<filters>({
     startDate: "",
     endDate: "",
-    page: 1,
-    limit: 5,
     storeType: "",
     salesmanType: "",
+    page: 1,
+    limit: 5,
   });
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["salesmanVisits", filters.startDate, filters.endDate, filters.page, filters.limit],
-    queryFn: () => fetchSalesmanVisits(filters),
-    placeholderData: (previousData) => previousData,
+    queryKey: ["salesmanVisits"],
+    queryFn: () => fetchSalesmanVisits(),
   });
 
-  const handleFilterChange = (e : React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleFilterChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
-    setFilters((prev) => ({ ...prev, [name]: value, page: 1 }));
+    setFilters((prev) => ({ ...prev, [name]: value, page: 1 })); // Reset to first page on filter change
   };
 
-  const handlePageChange = (newPage : number) => {
+  const handlePageChange = (newPage: number) => {
     setFilters((prev) => ({ ...prev, page: newPage }));
   };
 
-  const extractTime = (intime : string) => {
+  const extractTime = (intime: string) => {
     if (!intime) return "_";
     const date = new Date(intime);
-    return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    });
   };
-
-  const filteredData = data?.data?.filter((row : any) =>
-    (filters.storeType ? row.storeType === filters.storeType : true) &&
-    (filters.salesmanType ? row.salesmanType === filters.salesmanType : true)
-  ) || [];
- 
-  if (isLoading)
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-blue-500 rounded-full animate-spin border-t-transparent"></div>
-      </div>
-    );
 
   if (isError) return <div>Error fetching data</div>;
 
-  if (!data || data.data.length === 0)
-    return (
-      <div className="flex items-center justify-center h-64 text-gray-600">
-        No data available
-      </div>
-    );
+  // Frontend filtering
+  const allSalesmanVisits: DataRow[] = data?.data || [];
+  console.log(data?.data);
+
+  const filteredData = allSalesmanVisits.filter((row) => {
+    let valid = true;
+    if (filters.startDate) {
+      valid = valid && new Date(row.date) >= new Date(filters.startDate);
+    }
+    if (filters.endDate) {
+      valid = valid && new Date(row.date) <= new Date(filters.endDate);
+    }
+    if (filters.storeType) {
+      valid = valid && row.storeType === filters.storeType;
+    }
+    if (filters.salesmanType) {
+      valid = valid && row.salesmanType === filters.salesmanType;
+    }
+    return valid;
+  });
+
+  // Frontend pagination
+  const totalPages = Math.ceil(filteredData.length / filters.limit);
+  const startIndex = (filters.page - 1) * filters.limit;
+  const currentData = filteredData.slice(
+    startIndex,
+    startIndex + filters.limit
+  );
 
   return (
     <div className="w-full overflow-hidden bg-white rounded-lg shadow-lg">
@@ -222,7 +237,16 @@ const SalesmanTable = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredData.map((row: DataRow, index: number) => (
+              {isLoading && (
+                <tr>
+                  <td className="p-4 text-center" colSpan={11}>
+                    <div className="flex items-center justify-center">
+                      <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+                    </div>
+                  </td>
+                </tr>
+              )}
+              {currentData.map((row: DataRow, index: number) => (
                 <tr
                   key={index}
                   className="transition-colors hover:bg-gray-50/50"
@@ -290,23 +314,25 @@ const SalesmanTable = () => {
                     )}
                   </td>
                   <td className="p-4 bg-gray-50/30">
-                    {(() => {
-                      return (
-                        <div className={` px-4 py-3 rounded-lg`}>
-                          <div className="flex items-center justify-between">
-                            <span
-                              className={`text-lg text-black font-medium`}
-                            >
-                              {row.scanDistance === null ? "0m" : `${row.scanDistance}m`}
-                            </span>                            
-                          </div>
-                        
-                        </div>
-                      );
-                    })()}
+                    <div className="px-4 py-3 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <span className="text-lg font-medium text-black">
+                          {row.scanDistance === null
+                            ? "0m"
+                            : `${row.scanDistance}m`}
+                        </span>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               ))}
+              {!isLoading && currentData.length === 0 && (
+                <tr>
+                  <td className="p-4 text-center" colSpan={11}>
+                    No records found.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>
@@ -316,19 +342,19 @@ const SalesmanTable = () => {
         <button
           onClick={() => handlePageChange(filters.page - 1)}
           disabled={filters.page === 1}
-          className="flex items-center gap-2 p-2 text-gray-600 transition-colors bg-white rounded-lg shadow-lg hover:bg-gray-50"
+          className="px-4 py-2 text-gray-700 bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <ArrowLeft className="w-5 h-5" />
           Previous
         </button>
-        <span>Page {filters.page}</span>
+        <span>
+          Page {filters.page} of {totalPages || 1}
+        </span>
         <button
           onClick={() => handlePageChange(filters.page + 1)}
-          disabled={!data || data.data.length < filters.limit}
-          className="flex items-center gap-2 p-2 text-gray-600 transition-colors bg-white rounded-lg shadow-lg hover:bg-gray-50"
+          disabled={filters.page >= totalPages}
+          className="px-4 py-2 text-gray-700 bg-gray-100 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Next
-          <ArrowRight className="w-5 h-5" />
         </button>
       </div>
     </div>

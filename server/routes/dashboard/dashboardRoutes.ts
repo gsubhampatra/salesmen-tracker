@@ -48,7 +48,7 @@ import {
   gettotalOutletsVisited,
   getLocationAnalyticsByDateRange,
 } from "../../controller/dashboard/detailedAnalysisController";
-import { getSalesmanVisits } from "../../controller/dashboard/summeryController";
+import { getSalesmanVisits, getSalesmanVisitsByDate } from "../../controller/dashboard/summeryController";
 
 const router = Router();
 
@@ -108,7 +108,7 @@ router.get("/getTotalOutletsVisited", gettotalOutletsVisited);
 router.get("/getMostVisitedLocation", getMostVisitedLocation);
 
 router.get("/getLocationAnalytics", getLocationAnalytics);
-router.get("/getSalesmanSummary", getSalesmanVisits);
+router.get("/getSalesmanSummary", getSalesmanVisitsByDate);
 
 router.get("/getLocationAnalyticsByDateRange", getLocationAnalyticsByDateRange);
 

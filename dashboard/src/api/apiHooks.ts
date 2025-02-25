@@ -41,7 +41,6 @@ import {
   getDistributorAnalytics,
   gettotalOutletsAssigned,
   gettotalOutletsVisited,
-  getOverallAccuracy,
   getAverageVisitDuration,
   getMaxDistanceTraveled,
   getUniqueSalesman,
@@ -54,8 +53,10 @@ import {
   getAvgVisitDurationOvertime,
   getAccuracyOverTime,
   getSalesmanSummary,
+  getAccuracyPercentage,
+  getAvgDailyVisits,
 } from "./apiFunctions";
-import { LocationAnalyticResponse } from "../types/detailedResponseType";
+import { AvgDailyVisitResponse, LocationAnalyticResponse } from "../types/detailedResponseType";
 
 const useSalesmenCount = () => {
   return useQuery<SalesmanCountResponse>({
@@ -197,11 +198,11 @@ const useTotalOutletsVisited = () => {
   });
 };
 
-const useOverallAccuracy = () => {
+export const useAccuracyPercentage = () => {
   return useQuery<OverallAccuracyPercentageResponse>({
-    queryKey: ["overallAccuracy"],
+    queryKey: ["accuracyPercentage"],
     queryFn: async () => {
-      const response = await getOverallAccuracy();
+      const response = await getAccuracyPercentage();
       return response.data;
     },
   });
@@ -327,6 +328,15 @@ const useSalesmanSummary = (date?: string) => {
   });
 };
 
+export const useAvgDailyVisits = () => {
+  return useQuery<AvgDailyVisitResponse>({
+    queryKey: ["avgDailyVisits"],
+    queryFn: async () => {
+      const response = await getAvgDailyVisits();
+      return response.data;
+    }
+  } );
+};
 
 
 
@@ -341,7 +351,6 @@ export {
   useDistributorAnalytics,
   useTotalOutletsAssigned,
   useTotalOutletsVisited,
-  useOverallAccuracy,
   useAverageVisitDuration,
   useMaxDistanceTraveled,
   useUniqueSalesman,

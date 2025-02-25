@@ -125,3 +125,7 @@ export interface TotalSalesmenResponse {
       locationsWithVisits: number;
     };
   }
+
+  export interface AvgDailyVisitResponse{
+    avgDailyVisits: number;
+  }

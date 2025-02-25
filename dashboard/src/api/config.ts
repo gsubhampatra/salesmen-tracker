@@ -33,7 +33,7 @@ export const API_PATHS = {
       GET_DISTRIBUTORS: "/getDistributors",
       GET_DISTRIBUTOR_ANALYTICS: "/getDistributorAnalytics",
       GET_TOTAL_DISTRIBUTORS: "/gettotaldistributors",
-      GET_OVERALL_ACCURACY: "/getOverallAccuracy",
+      GET_ACCURACY_PERCENTAGE: "/getAccuracyPercentage",
       GET_AVERAGE_VISIT_DURATION: "/getAverageVisitDuration",
       GET_MAX_DISTANCE_TRAVELED: "/getMaxDistanceTravelled",
       GET_UNIQUE_SALESMAN: "/getUniqueSalesman",
@@ -65,11 +65,11 @@ export const API_PATHS = {
     },
 
     GET_DETAILED_ANALYTICS_BY_DATE_RANGE: "/getLocationAnalyticsByDateRange",
-
+    GET_AVG_DAILY_VISITS: "/getAvgDailyVisits",
 
     SALESMAN_SUMMARY: {
       ROOT: "/",
       GET_SALESMAN_SUMMARY: "/getSalesmanSummary",
-    }
+    },
   },
 };

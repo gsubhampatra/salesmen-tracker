@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import * as XLSX from "xlsx";
+
 import {
   Building2,
   Globe,
@@ -80,7 +82,7 @@ const SalesmanTable = () => {
     return date.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
-      hour12: false,
+      hour12: true,
     });
   };
 
@@ -88,15 +90,18 @@ const SalesmanTable = () => {
 
   // Frontend filtering
   const allSalesmanVisits: DataRow[] = data?.data || [];
-  console.log(data?.data);
 
   const filteredData = allSalesmanVisits.filter((row) => {
     let valid = true;
     if (filters.startDate) {
-      valid = valid && new Date(row.date) >= new Date(filters.startDate);
+      const startDate = new Date(filters.startDate);
+      startDate.setHours(0, 0, 0, 0);
+      valid = valid && new Date(row.date) >= startDate;
     }
     if (filters.endDate) {
-      valid = valid && new Date(row.date) <= new Date(filters.endDate);
+      const endDate = new Date(filters.endDate);
+      endDate.setHours(23, 59, 59, 999);
+      valid = valid && new Date(row.date) <= endDate;
     }
     if (filters.storeType) {
       valid = valid && row.storeType === filters.storeType;
@@ -114,6 +119,14 @@ const SalesmanTable = () => {
     startIndex,
     startIndex + filters.limit
   );
+
+  const exportToExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(filteredData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Salesman Summary");
+    XLSX.writeFile(wb, "salesman_summary.xlsx");
+  };
+  
 
   return (
     <div className="w-full overflow-hidden bg-white rounded-lg shadow-lg">
@@ -160,6 +173,12 @@ const SalesmanTable = () => {
             <option value="MERCHANDISER">Merchandiser</option>
             <option value="DELIVERY">Delivery</option>
           </select>
+          <button
+            onClick={exportToExcel}
+            className="px-4 py-2 text-white bg-green-500 rounded hover:bg-green-600"
+          >
+            Export to Excel
+          </button>
         </div>
       </div>
 

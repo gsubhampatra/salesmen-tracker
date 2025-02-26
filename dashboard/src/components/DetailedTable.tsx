@@ -34,23 +34,13 @@ type DataResponse = {
   data: LocationAnalytics[];
 };
 
-const fetchAnalytics = async (startDate?: string, endDate?: string) => {
-  // Format dates for API request
-  let params: any = {};
-
-  if (startDate) {
-    params.startDate = startDate;
-  }
-
-  if (endDate) {
-    params.endDate = endDate;
-  }
-
-  // Remove pagination parameters since we're handling pagination on the frontend
+const fetchAnalytics = async (date: string) => {
   const response = await api.get(
     API_PATHS.DASHBOARD.GET_DETAILED_ANALYTICS_BY_DATE_RANGE,
     {
-      params,
+      params: {
+        date,
+      },
     }
   );
   return response.data;
@@ -58,17 +48,16 @@ const fetchAnalytics = async (startDate?: string, endDate?: string) => {
 
 const DetailedTable: React.FC = () => {
   const [page, setPage] = useState(1);
-  const [itemsPerPage] = useState(10);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [salesmanType, setSalesmanType] = useState("");
+  const [itemsPerPage] = useState(20);
   const [allData, setAllData] = useState<LocationAnalytics[]>([]);
+  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [salesmanType, setSalesmanType] = useState("");
 
   const salesmanTypes = ["VANSALES", "PRESELLER", "MERCHANDISER", "DILIVERY"];
 
   const { data, isLoading, error, refetch } = useQuery<DataResponse>({
-    queryKey: ["locationAnalytics", startDate, endDate],
-    queryFn: () => fetchAnalytics(startDate, endDate),
+    queryKey: ["locationAnalytics", date],
+    queryFn: () => fetchAnalytics(date),
   });
 
   useEffect(() => {
@@ -98,14 +87,8 @@ const DetailedTable: React.FC = () => {
   const startItem = totalItems > 0 ? startIndex + 1 : 0;
   const endItem = Math.min(startIndex + paginatedData.length, totalItems);
 
-  const handleStartDateChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setStartDate(event.target.value);
-  };
-
-  const handleEndDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEndDate(event.target.value);
+  const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDate(event.target.value);
   };
 
   const handleSalesmanTypeChange = (
@@ -120,8 +103,7 @@ const DetailedTable: React.FC = () => {
   };
 
   const clearFilters = () => {
-    setStartDate("");
-    setEndDate("");
+    setDate("");
     setSalesmanType("");
     setPage(1);
     refetch();
@@ -154,12 +136,9 @@ const DetailedTable: React.FC = () => {
 
     // Create filename with date range if present
     let filename = "overall-analytics";
-    if (startDate && endDate) {
-      filename += `_${startDate}_to_${endDate}`;
-    } else if (startDate) {
-      filename += `_from_${startDate}`;
-    } else if (endDate) {
-      filename += `_to_${endDate}`;
+
+    if (date) {
+      filename += `_${date}`;
     }
 
     if (salesmanType) {
@@ -177,31 +156,21 @@ const DetailedTable: React.FC = () => {
     <div className="overflow-hidden bg-white border rounded-lg shadow-xl border-slate-200">
       <div className="flex flex-col justify-between p-6 border-b md:flex-row md:items-center border-slate-200 bg-gradient-to-r from-blue-50 to-indigo-50">
         <h2 className="mb-4 text-xl font-bold text-slate-800 md:mb-0">
-          <span className="text-blue-600">Analytics</span> Dashboard
+          <span className="text-blue-600">Detailed Analysis Report</span>
         </h2>
         <div className="flex flex-col gap-3 md:flex-row">
           <div className="flex flex-col">
             <label className="mb-1 text-xs font-medium text-slate-500">
-              Start Date
+              Date
             </label>
             <input
               type="date"
-              value={startDate}
-              onChange={handleStartDateChange}
+              value={date}
+              onChange={handleDateChange}
               className="px-3 py-2 transition border rounded-md border-slate-300 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-          <div className="flex flex-col">
-            <label className="mb-1 text-xs font-medium text-slate-500">
-              End Date
-            </label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={handleEndDateChange}
-              className="px-3 py-2 transition border rounded-md border-slate-300 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
+
           <div className="flex flex-col">
             <label className="mb-1 text-xs font-medium text-slate-500">
               Salesman Type
@@ -253,7 +222,7 @@ const DetailedTable: React.FC = () => {
                 </button>
               </div>
             )}
-            {(startDate || endDate) && (
+            {date && (
               <div className="inline-flex items-center px-3 py-1 text-xs text-blue-800 bg-blue-100 rounded-full">
                 <span>Date Filter</span>
                 <button
@@ -302,7 +271,7 @@ const DetailedTable: React.FC = () => {
           </p>
         </div>
       ) : (
-        <div className="overflow-y-auto max-h-96">
+        <div className="overflow-y-auto max-h-[60vh]">
           <table className="w-full">
             <thead className="sticky top-0 bg-white shadow-sm">
               <tr className="border-b border-slate-200">

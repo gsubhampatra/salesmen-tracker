@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import * as XLSX from "xlsx";
 
 import {
-  Building2,
   Globe,
   Map,
   Store,
@@ -20,8 +19,7 @@ import {
 import { api, API_PATHS } from "../api/config";
 
 type filters = {
-  startDate: string;
-  endDate: string;
+  date: string;
   page: number;
   limit: number;
   storeType: string;
@@ -52,12 +50,11 @@ const fetchSalesmanVisits = async () => {
 
 const SalesmanTable = () => {
   const [filters, setFilters] = useState<filters>({
-    startDate: "",
-    endDate: "",
+    date: new Date().toISOString().split("T")[0],
     storeType: "",
     salesmanType: "",
     page: 1,
-    limit: 5,
+    limit: 20,
   });
 
   const { data, isLoading, isError } = useQuery({
@@ -93,16 +90,17 @@ const SalesmanTable = () => {
 
   const filteredData = allSalesmanVisits.filter((row) => {
     let valid = true;
-    if (filters.startDate) {
-      const startDate = new Date(filters.startDate);
+    if (filters.date) {
+      const startDate = new Date(filters.date);
       startDate.setHours(0, 0, 0, 0);
-      valid = valid && new Date(row.date) >= startDate;
-    }
-    if (filters.endDate) {
-      const endDate = new Date(filters.endDate);
+      const endDate = new Date(startDate);
       endDate.setHours(23, 59, 59, 999);
-      valid = valid && new Date(row.date) <= endDate;
+      valid =
+        valid &&
+        new Date(row.date) >= startDate &&
+        new Date(row.date) <= endDate;
     }
+
     if (filters.storeType) {
       valid = valid && row.storeType === filters.storeType;
     }
@@ -126,30 +124,22 @@ const SalesmanTable = () => {
     XLSX.utils.book_append_sheet(wb, ws, "Salesman Summary");
     XLSX.writeFile(wb, "salesman_summary.xlsx");
   };
-  
 
   return (
     <div className="w-full overflow-hidden bg-white rounded-lg shadow-lg">
       <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100/50">
         <h2 className="flex items-center gap-2 text-xl font-semibold text-gray-800">
-          <Building2 className="w-5 h-5 text-blue-600" />
-          Summary Dashboard
+          Salesman Summary
         </h2>
         <div className="flex gap-4 mt-4">
           <input
             type="date"
-            name="startDate"
-            value={filters.startDate}
+            name="date"
+            value={filters.date}
             onChange={handleFilterChange}
             className="p-2 border rounded"
           />
-          <input
-            type="date"
-            name="endDate"
-            value={filters.endDate}
-            onChange={handleFilterChange}
-            className="p-2 border rounded"
-          />
+
           <select
             name="storeType"
             value={filters.storeType}
@@ -183,7 +173,7 @@ const SalesmanTable = () => {
       </div>
 
       <div className="relative">
-        <div className="overflow-x-auto">
+        <div className="overflow-hidden overflow-x-auto">
           <table className="w-full">
             <thead className="sticky top-0 z-10 bg-white shadow-sm">
               <tr className="text-left">
@@ -238,7 +228,7 @@ const SalesmanTable = () => {
                 <th className="p-4 bg-gray-50/80">
                   <div className="flex items-center gap-2 text-purple-700">
                     <Clock className="w-4 h-4" />
-                    In Time
+                    Visite Time
                   </div>
                 </th>
                 <th className="p-4">
@@ -255,7 +245,7 @@ const SalesmanTable = () => {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="overflow-y-auto max-h-[70vh] divide-y divide-gray-200">
               {isLoading && (
                 <tr>
                   <td className="p-4 text-center" colSpan={11}>

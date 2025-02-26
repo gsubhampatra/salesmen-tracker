@@ -153,7 +153,7 @@ const DetailedTable: React.FC = () => {
   };
 
   return (
-    <div className="overflow-hidden bg-white border rounded-lg shadow-xl border-slate-200">
+    <div className="p-2 overflow-hidden bg-white border rounded-lg shadow-xl border-slate-200">
       <div className="flex flex-col justify-between p-6 border-b md:flex-row md:items-center border-slate-200 bg-gradient-to-r from-blue-50 to-indigo-50">
         <h2 className="mb-4 text-xl font-bold text-slate-800 md:mb-0">
           <span className="text-blue-600">Detailed Analysis Report</span>
@@ -271,7 +271,7 @@ const DetailedTable: React.FC = () => {
           </p>
         </div>
       ) : (
-        <div className="overflow-y-auto max-h-[60vh]">
+        <div className="overflow-y-auto ">
           <table className="w-full">
             <thead className="sticky top-0 bg-white shadow-sm">
               <tr className="border-b border-slate-200">

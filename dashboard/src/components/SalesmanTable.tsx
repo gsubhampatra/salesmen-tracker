@@ -3,7 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import * as XLSX from "xlsx";
 
 import {
-  Globe,
   Map,
   Store,
   User,
@@ -126,7 +125,7 @@ const SalesmanTable = () => {
   };
 
   return (
-    <div className="w-full overflow-hidden bg-white rounded-lg shadow-lg">
+    <div className="w-full p-2 overflow-hidden bg-white rounded-lg shadow-lg">
       <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-blue-100/50">
         <h2 className="flex items-center gap-2 text-xl font-semibold text-gray-800">
           Salesman Summary
@@ -177,12 +176,6 @@ const SalesmanTable = () => {
           <table className="w-full">
             <thead className="sticky top-0 z-10 bg-white shadow-sm">
               <tr className="text-left">
-                <th className="p-4 bg-gray-50/80">
-                  <div className="flex items-center gap-2 text-blue-700">
-                    <Globe className="w-4 h-4" />
-                    Region
-                  </div>
-                </th>
                 <th className="p-4">
                   <div className="flex items-center gap-2 text-indigo-700">
                     <Map className="w-4 h-4" />
@@ -260,11 +253,6 @@ const SalesmanTable = () => {
                   key={index}
                   className="transition-colors hover:bg-gray-50/50"
                 >
-                  <td className="p-4 bg-gray-50/30">
-                    <span className="font-medium text-blue-800">
-                      {row.region ? row.region : "N/A"}
-                    </span>
-                  </td>
                   <td className="p-4">
                     <span className="font-medium text-indigo-800">
                       {row.state}

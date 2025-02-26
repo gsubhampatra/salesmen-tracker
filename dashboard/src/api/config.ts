@@ -66,7 +66,7 @@ export const API_PATHS = {
 
     GET_DETAILED_ANALYTICS_BY_DATE_RANGE: "/getLocationAnalyticsByDateRange",
     GET_AVG_DAILY_VISITS: "/getAvgDailyVisits",
-
+    LOGIN : "/login",
     SALESMAN_SUMMARY: {
       ROOT: "/",
       GET_SALESMAN_SUMMARY: "/getSalesmanSummary",

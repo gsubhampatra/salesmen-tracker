@@ -54,6 +54,7 @@ import {
   getSalesmanVisits,
   getSalesmanVisitsByDate,
 } from "../../controller/dashboard/summeryController";
+import { Login } from "../../controller/dashboard/dashboardLogin";
 
 const router = Router();
 
@@ -118,5 +119,7 @@ router.get("/getSalesmanSummary", getSalesmanVisitsByDate);
 router.get("/getLocationAnalyticsByDateRange", getLocationAnalyticsByDateRange);
 router.get("getAccuracyPercentage", getAccuracyPercentage);
 router.get("/getAvgDailyVisits", getAvgDailyVisits);
+
+router.post("/login", Login);
 
 export default router;

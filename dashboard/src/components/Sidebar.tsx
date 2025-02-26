@@ -7,7 +7,8 @@ import {
   Menu,
   LucideIcon,
   User,
-  BarChart3
+  BarChart3,
+  LogOut,
 } from "lucide-react";
 
 interface SidebarLink {
@@ -19,9 +20,11 @@ interface SidebarLink {
 const Sidebar = ({
   isExpanded,
   setIsExpanded,
+  setIsAuthenticated,
 }: {
   isExpanded: boolean;
   setIsExpanded: (value: boolean) => void;
+  setIsAuthenticated: (value: boolean) => void;
 }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const location = useLocation();
@@ -31,8 +34,6 @@ const Sidebar = ({
     { title: "Detailed Analysis", path: "/detailed-analysis", icon: BarChart3 },
     { title: "Salesman Summary", path: "/Salesman-Summary", icon: User },
   ];
-
-  
 
   const isActivePath = (path: string) => location.pathname === path;
 
@@ -61,7 +62,11 @@ const Sidebar = ({
           fixed top-0 left-0 h-screen bg-white border-r border-gray-200
           transition-all duration-300 ease-in-out z-50 
           ${isExpanded ? "w-64" : "w-20"}
-          ${isMobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+          ${
+            isMobileOpen
+              ? "translate-x-0"
+              : "-translate-x-full md:translate-x-0"
+          }
         `}
       >
         {/* Logo Section */}
@@ -83,7 +88,11 @@ const Sidebar = ({
             onClick={() => setIsExpanded(!isExpanded)}
             className="hidden md:block hover:bg-gray-100 p-1.5 rounded-lg transition-colors"
           >
-            {isExpanded ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+            {isExpanded ? (
+              <ChevronLeft size={20} />
+            ) : (
+              <ChevronRight size={20} />
+            )}
           </button>
         </div>
 
@@ -98,14 +107,22 @@ const Sidebar = ({
                 className={`
                   flex items-center gap-3 px-3 py-3 rounded-lg transition-colors
                   hover:bg-gray-100 group relative
-                  ${isActivePath(link.path) ? "bg-blue-50 text-blue-600" : "text-gray-600"}
+                  ${
+                    isActivePath(link.path)
+                      ? "bg-blue-50 text-blue-600"
+                      : "text-gray-600"
+                  }
                 `}
                 onClick={() => setIsMobileOpen(false)} // Close sidebar on mobile when a link is clicked
               >
                 <div className="flex items-center justify-center w-6">
                   <Icon
                     size={22}
-                    className={isActivePath(link.path) ? "text-blue-600" : "text-gray-600"}
+                    className={
+                      isActivePath(link.path)
+                        ? "text-blue-600"
+                        : "text-gray-600"
+                    }
                   />
                 </div>
                 <span
@@ -116,9 +133,7 @@ const Sidebar = ({
                   {link.title}
                 </span>
                 {!isExpanded && (
-                  <div
-                    className="absolute px-2 py-1 ml-2 text-sm text-white transition-opacity bg-gray-800 rounded-md opacity-0 pointer-events-none left-full whitespace-nowrap group-hover:opacity-100"
-                  >
+                  <div className="absolute px-2 py-1 ml-2 text-sm text-white transition-opacity bg-gray-800 rounded-md opacity-0 pointer-events-none left-full whitespace-nowrap group-hover:opacity-100">
                     {link.title}
                   </div>
                 )}
@@ -126,8 +141,25 @@ const Sidebar = ({
             );
           })}
 
-          {/* Section-Wise Reports Dropdown - Hidden when Sidebar is Collapsed */}
-         
+          <button
+            className="flex items-center gap-3 px-3 py-3 transition-colors rounded-lg hover:bg-gray-100"
+            onClick={() => {
+              localStorage.clear();
+              window.location.reload();
+              setIsAuthenticated(false);
+            }}
+          >
+            <div className="flex items-center justify-center w-6">
+              <LogOut size={22} />
+            </div>
+            <span
+              className={`font-medium whitespace-nowrap transition-opacity duration-200 ${
+                isExpanded ? "opacity-100" : "opacity-0 hidden"
+              }`}
+            >
+              Logout
+            </span>
+          </button>
         </nav>
       </aside>
     </>

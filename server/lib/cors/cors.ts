@@ -1,8 +1,6 @@
 import { CorsOptions } from "cors";
 
-const allowedOrigins = [
-  'http://localhost:5173',
-];
+const allowedOrigins = ["*"];
 
 export const corsOptions: CorsOptions = {
   credentials: true,
@@ -10,8 +8,8 @@ export const corsOptions: CorsOptions = {
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(console.error('CORS Error: Blocked by CORS'));
+      callback(console.error("CORS Error: Blocked by CORS"));
     }
   },
   optionsSuccessStatus: 200,
-}
+};

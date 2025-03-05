@@ -8,7 +8,6 @@ import {
   LucideIcon,
   User,
   BarChart3,
-  LogOut,
 } from "lucide-react";
 
 interface SidebarLink {
@@ -20,11 +19,9 @@ interface SidebarLink {
 const Sidebar = ({
   isExpanded,
   setIsExpanded,
-  setIsAuthenticated,
 }: {
   isExpanded: boolean;
   setIsExpanded: (value: boolean) => void;
-  setIsAuthenticated: (value: boolean) => void;
 }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const location = useLocation();
@@ -140,13 +137,12 @@ const Sidebar = ({
               </Link>
             );
           })}
-
+          {/* 
           <button
             className="flex items-center gap-3 px-3 py-3 transition-colors rounded-lg hover:bg-gray-100"
             onClick={() => {
               localStorage.clear();
               window.location.reload();
-              setIsAuthenticated(false);
             }}
           >
             <div className="flex items-center justify-center w-6">
@@ -159,7 +155,7 @@ const Sidebar = ({
             >
               Logout
             </span>
-          </button>
+          </button> */}
         </nav>
       </aside>
     </>

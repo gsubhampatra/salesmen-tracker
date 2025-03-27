@@ -149,6 +149,8 @@ const SalesmanTable = () => {
             <option value="RETAILER">Retailer</option>
             <option value="DISTRIBUTOR">Distributor</option>
             <option value="WHOLESALER">Wholesaler</option>
+            <option value="MEGA">Mega</option>
+            <option value="SUB">Sub</option>
           </select>
           <select
             name="salesmanType"
@@ -160,7 +162,9 @@ const SalesmanTable = () => {
             <option value="VANSALES">Van Sales</option>
             <option value="PRESELLER">Preseller</option>
             <option value="MERCHANDISER">Merchandiser</option>
-            <option value="DELIVERY">Delivery</option>
+            <option value="DILIVERY">Delivery</option>
+            <option value="CITYHEAD">City Head</option>
+            <option value="SUPERVISOR">Supervisor</option>
           </select>
           <button
             onClick={exportToExcel}

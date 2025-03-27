@@ -70,7 +70,6 @@ const Sidebar = ({
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-100">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-lg">
-              <span className="text-xl font-bold text-white">S</span>
             </div>
             <h1
               className={`font-bold text-xl transition-opacity duration-200 ${

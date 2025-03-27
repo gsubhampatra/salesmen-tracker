@@ -53,7 +53,14 @@ const DetailedTable: React.FC = () => {
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [salesmanType, setSalesmanType] = useState("");
 
-  const salesmanTypes = ["VANSALES", "PRESELLER", "MERCHANDISER", "DILIVERY"];
+  const salesmanTypes = [
+    "VANSALES",
+    "PRESELLER",
+    "MERCHANDISER",
+    "DILIVERY",
+    "CITYHEAD",
+    "SUPERVISOR",
+  ];
 
   const { data, isLoading, error, refetch } = useQuery<DataResponse>({
     queryKey: ["locationAnalytics", date],

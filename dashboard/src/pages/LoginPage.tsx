@@ -29,9 +29,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ setIsAuthenticated }) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await api.post(API_PATHS.DASHBOARD.LOGIN, formData, {
-        withCredentials: true,
-      });
+      const response = await api.post(API_PATHS.DASHBOARD.LOGIN, formData);
 
       if (response.status === 200) {
         localStorage.setItem("sfa_admin_token", response.data.token);
